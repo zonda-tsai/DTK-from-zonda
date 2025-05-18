@@ -1,5 +1,8 @@
 #!/bin/bash
 
+sudo apt update
+sudo apt install -y gcc g++ make valgrind
+
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 gcc -O3 "$DIR/settings.c" -o "$DIR/settings" >/dev/null 2>&1
