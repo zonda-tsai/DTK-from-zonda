@@ -83,10 +83,10 @@ char** dir_content(){
 	return temp;
 }
 
-void System(char* file, int test){
+void System(const char* file, int test){
 	if(access(file, F_OK)) return;
 	printf("\e[33;1m=====%s=====\e[0m\n", file);
-	char *cmd;
+	char *cmd, *pure_name = file_name(file);
 	if(!access(file, R_OK)){
 		FILE *f;
 		f = fopen(file, "r");
@@ -104,15 +104,19 @@ void System(char* file, int test){
 			snprintf(cmd, strlen(shebang) + strlen(file), "%s %s", shebang + 2, file);
 			fclose(f);
 		}
-		else if(!access(file, X_OK)){
-			cmd = malloc(strlen(file) + 3);
+		else if(!access(pure_name, X_OK)){
+			cmd = malloc(strlen(pure_name) + 3);
 			if(cmd == NULL) err_ptr();
-			snprintf(cmd, strlen(file) + 3, "./%s", file);
+			snprintf(cmd, strlen(pure_name) + 3, "./%s", pure_name);
+			free(pure_name);
 		}
 		else{
-			printf("File cannot be executed <try chmod +x %s> or its not executable file\n", file);
+			if(pure_name != NULL) free(pure_name);
+			printf("**%s is not an executable file**\n", file);
+			fclose(f);
 			return;
 		}
+		fclose(f);
 		if(test){
 			char *test_file = file_name(file);
 			char *ins;
