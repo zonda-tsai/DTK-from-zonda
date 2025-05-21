@@ -242,6 +242,8 @@ char System(const char* file, int test){
 				printf("Failed to allocate memory...\n");
 				return 0;
 			}
+			if(strlen(shebang) > 1 && shebang[strlen(shebang) - 1] == '\n')
+				shebang[strlen(shebang) - 1] = 0;
 			if(!test)
 				snprintf(cmd, len, "%s %s", shebang + 2, file);
 			else
