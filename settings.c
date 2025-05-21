@@ -28,7 +28,10 @@ void makefile_C(){
 	fprintf(f, "CC = gcc\n");
 	fprintf(f, "FLAGS = -std=c11 -Wall -Wextra -O2\n");
 	fprintf(f, "LDFLAGS = \n");
-	fprintf(f, "TARGETS = $(basename $(wildcard *.c))\n\n");
+	fprintf(f, "SRC1 = $(wildcard *.c)\n");
+	fprintf(f, "SRC2 = $(wildcard *.c/)\n");
+	fprintf(f, "PRJS = $(SRC2:/=)\n");
+	fprintf(f, "TARGETS = $(basename $(filter-out $(PRJS), $(SRC1)))\n\n");
 	fprintf(f, ".PHONY: all clean\n");
 	fprintf(f, "all: $(TARGETS)\n");
 	fprintf(f, "%%: %%.o\n");
@@ -50,20 +53,21 @@ void makefile_C_prj(){
 	fprintf(f, "FLAGS = -std=c11 -Wall -Wextra -g -O2\n");
 	fprintf(f, "LDFLAGS =\n");
 	fprintf(f, "ALL_DEPS =\n\n");
-	fprintf(f, "DIR = $(sort $(patsubst %%/,%%,$(wildcard *.prj/)))\n");
+	fprintf(f, "DIR = $(sort $(patsubst %%/,%%,$(wildcard *.c/)))\n");
 	fprintf(f, "TARGET = $(notdir $(basename $(DIR)))\n\n");
 	fprintf(f, "define TEMPLATE\n");
-	fprintf(f, "_SOURCES = $(wildcard $(1).prj/*.c)\n");
+	fprintf(f, "_SOURCES = $(wildcard $(1).c/*.c)\n");
 	fprintf(f, "_OBJECTS = $$(_SOURCES:.c=.o)\n");
 	fprintf(f, "_DEPENDS = $$(_SOURCES:.c=.d)\n\n");
 	fprintf(f, "$(1): $$(_OBJECTS)\n");
 	fprintf(f, "\t$$(CC) $$(FLAGS) $$^ -o $$@ $$(LDFLAGS)\n\n");
-	fprintf(f, "$(1).prj/%%.o: $(1).prj/%%.c\n");
-	fprintf(f, "\t$$(CC) -I$(1).prj $$(FLAGS) -MMD -MP -MF $$(@:.o=.d) -c $$< -o $$@\n\n");
+	fprintf(f, "$(1).c/%%.o: $(1).c/%%.c\n");
+	fprintf(f, "\t$$(CC) -I$(1).c $$(FLAGS) -MMD -MP -MF $$(@:.o=.d) -c $$< -o $$@\n\n");
 	fprintf(f, "ALL_DEPS += $$(_DEPENDS)\n");
 	fprintf(f, "endef\n\n");
 	fprintf(f, "$(foreach proj_dir,$(TARGET),$(eval $(call TEMPLATE,$(proj_dir))))\n\n");
-	fprintf(f, ".PHONY: all clean\n\n");
+	fprintf(f, ".PHONY: all clean\n");
+	fprintf(f, ".DEFAULT_GOAL = all\n\n");
 	fprintf(f, "all: $(TARGET)\n\n");
 	fprintf(f, "-include $(ALL_DEPS)\n\n");
 	fprintf(f, "clean:\n");
@@ -81,7 +85,10 @@ void makefile_Cpp(){
 	fprintf(f, "CC = g++\n");
 	fprintf(f, "FLAGS = -std=c++11 -Wall -Wextra -O2\n");
 	fprintf(f, "LDFLAGS = \n");
-	fprintf(f, "TARGETS = $(basename $(wildcard *.cpp))\n\n");
+	fprintf(f, "SRC1 = $(wildcard *.cpp)\n");
+	fprintf(f, "SRC2 = $(wildcard *.cpp/)\n");
+	fprintf(f, "PRJS = $(SRC2:/=)\n");
+	fprintf(f, "TARGETS = $(basename $(filter-out $(PRJS), $(SRC1)))\n\n");
 	fprintf(f, ".PHONY: all clean\n");
 	fprintf(f, "all: $(TARGETS)\n");
 	fprintf(f, "%%: %%.o\n");
@@ -103,20 +110,21 @@ void makefile_Cpp_prj(){
 	fprintf(f, "FLAGS = -std=c++11 -Wall -Wextra -g -O2\n");
 	fprintf(f, "LDFLAGS =\n");
 	fprintf(f, "ALL_DEPS =\n\n");
-	fprintf(f, "DIR = $(sort $(patsubst %%/,%%,$(wildcard *.prj/)))\n");
+	fprintf(f, "DIR = $(sort $(patsubst %%/,%%,$(wildcard *.cpp/)))\n");
 	fprintf(f, "TARGET = $(notdir $(basename $(DIR)))\n\n");
 	fprintf(f, "define TEMPLATE\n");
-	fprintf(f, "_SOURCES = $(wildcard $(1).prj/*.cpp)\n");
+	fprintf(f, "_SOURCES = $(wildcard $(1).cpp/*.cpp)\n");
 	fprintf(f, "_OBJECTS = $$(_SOURCES:.cpp=.o)\n");
 	fprintf(f, "_DEPENDS = $$(_SOURCES:.cpp=.d)\n\n");
 	fprintf(f, "$(1): $$(_OBJECTS)\n");
 	fprintf(f, "\t$$(CC) $$(FLAGS) $$^ -o $$@ $$(LDFLAGS)\n\n");
-	fprintf(f, "$(1).prj/%%.o: $(1).prj/%%.cpp\n");
-	fprintf(f, "\t$$(CC) -I$(1).prj $$(FLAGS) -MMD -MP -MF $$(@:.o=.d) -c $$< -o $$@\n\n");
+	fprintf(f, "$(1).cpp/%%.o: $(1).cpp/%%.cpp\n");
+	fprintf(f, "\t$$(CC) -I$(1).cpp $$(FLAGS) -MMD -MP -MF $$(@:.o=.d) -c $$< -o $$@\n\n");
 	fprintf(f, "ALL_DEPS += $$(_DEPENDS)\n");
 	fprintf(f, "endef\n\n");
 	fprintf(f, "$(foreach proj_dir,$(TARGET),$(eval $(call TEMPLATE,$(proj_dir))))\n\n");
-	fprintf(f, ".PHONY: all clean\n\n");
+	fprintf(f, ".PHONY: all clean\n");
+	fprintf(f, ".DEFAULT_GOAL = all\n\n");
 	fprintf(f, "all: $(TARGET)\n\n");
 	fprintf(f, "-include $(ALL_DEPS)\n\n");
 	fprintf(f, "clean:\n");
@@ -140,7 +148,8 @@ int main(int argc, char* argv[]){
 			makefile_Cpp_prj();
 		}
 		else if(strcmp(argv[1], "-reset") == 0){
-			system("rm -f ~/.zonda.ide/makefiles/* && rm -f ~/.zonda.ide/flags");
+			system("rm -rf ~/.zonda.ide");
+			make_dir();
 			makefile_C();
 			makefile_Cpp();
 			makefile_C_prj();
@@ -148,7 +157,7 @@ int main(int argc, char* argv[]){
 		}
 		else if(strcmp(argv[1], "-uninstall") == 0){
 			char ch;
-			printf("Are you sure to remove this? (Y/N) ");
+			printf("Second check for uninstalling? (Y/N) ");
 			ch = getchar();
 			getchar();
 			if(ch == 'N' || ch == 'n'){
@@ -158,6 +167,7 @@ int main(int argc, char* argv[]){
 			else if(ch == 'Y' || ch == 'y'){
 				printf("Uninstalling...\n");
 				system("rm -f ~/bin/compile ~/bin/run ~/bin/settings");
+				printf("Thanks for using this.\nThis can be downloaded by \"git clone https://github.com/zonda-tsai/IDE-from-zonda\" if you want to.\n");
 				return 0;
 			}
 		}

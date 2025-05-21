@@ -10,6 +10,17 @@ void err_ptr(){
 	exit(1);
 }
 
+void free_content(char **content){
+	int i = 0;
+	if(content != NULL){
+		while(content[i] != NULL){
+			free(content[i]);
+			i++;
+		}
+		free(content);
+	}
+}
+
 const char* file_type(const char *file){
 	if(file == NULL || file[0] == '\0') return "";
 	int i;
@@ -41,18 +52,91 @@ void sort(char **arr, int n){
 	qsort(arr, n, sizeof(char*), cmp);
 }
 
-char** dir_content(){
+char isDir(const char* file){
+	struct stat st;
+	if(stat(file, &st))
+		return 0;
+	if(S_ISDIR(st.st_mode))
+		return 1;
+	return 0;
+}
+
+char isExecutable(char* file){
+	if(strcmp(file, ".") == 0 || strcmp(file, "..") == 0)
+		return 0;
+	struct stat st;
+	if(stat(file, &st) != 0)
+		return 0;
+	if(S_ISDIR(st.st_mode))
+		return 0;
+	if(!access(file, X_OK))
+		return 1;
+	if(access(file, R_OK))
+		return 0;
+	FILE *f;
+	f = fopen(file, "r");
+	if(f == NULL)
+		return 0;
+	char shebang[1001] = {0};
+	fgets(shebang, 1000, f);
+	if(strlen(shebang) > 2 && strncmp(shebang, "#!", 2) == 0){
+		fclose(f);
+		return 1;
+	}
+	fclose(f);
+	return 0;
+}
+
+char** dir_type_content(char* type){
 	DIR *dir = opendir(".");
 	if(dir == NULL){
 		printf("Failed to open current dir.\n");
-		exit(1);
+		return NULL;
 	}
 	struct dirent *entry;
 	struct stat st;
 	char **temp;
 	int i = 0, n = 0;
 	while((entry = readdir(dir)) != NULL){
-		if((strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) || stat(entry->d_name, &st) != 0 || (S_ISDIR(st.st_mode) && strcmp(file_type(entry->d_name), "prj") != 0))
+		if(stat(entry->d_name, &st) != 0 || strcmp(file_type(entry->d_name), type) != 0)
+			continue;
+		n++;
+	}
+	if(n == 0){
+		closedir(dir);
+		return NULL;
+	}
+	rewinddir(dir);
+	temp = malloc((n + 1) * sizeof(char*));
+	i = 0;
+	if(temp == NULL) err_ptr();
+	while((entry = readdir(dir)) != NULL && i < n){
+		if(stat(entry->d_name, &st) != 0 || strcmp(file_type(entry->d_name), type) != 0)
+			continue;
+		temp[i] = malloc(strlen(entry->d_name) + 1);
+		if(temp[i] == NULL){
+			free_content(temp);
+			printf("Failed to allocate memory...\n");
+			return NULL;
+		}
+		strcpy(temp[i++], entry->d_name);
+	}
+	temp[i] = NULL;
+	sort(temp, i);
+	return temp;
+}
+
+char** dir_exe_content(){
+	DIR *dir = opendir(".");
+	if(dir == NULL){
+		printf("Failed to open current dir.\n");
+		exit(1);
+	}
+	struct dirent *entry;
+	char **temp;
+	int i = 0, n = 0;
+	while((entry = readdir(dir)) != NULL){
+		if(!isExecutable(entry->d_name))
 			continue;
 		n++;
 	}
@@ -64,15 +148,14 @@ char** dir_content(){
 	if(temp == NULL) err_ptr();
 	rewinddir(dir);
 	while((entry = readdir(dir)) != NULL && i < n){
-		if(strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0 || stat(entry->d_name, &st) != 0 || (S_ISDIR(st.st_mode) && strcmp(file_type(entry->d_name), "prj") != 0))
+		if(!isExecutable(entry->d_name))
 			continue;
 		temp[i] = malloc(strlen(entry->d_name) + 1);
 		if(temp[i] == NULL){
 			closedir(dir);
-			i--;
-			while(i--) free(temp[i]);
-			free(temp);
-			err_ptr();
+			free_content(temp);
+			printf("Failed to allocate memory...\n");
+			return NULL;
 		}
 		strcpy(temp[i], entry->d_name);
 		i++;
@@ -83,138 +166,154 @@ char** dir_content(){
 	return temp;
 }
 
-void System(const char* file, int test){
-	if(file == NULL || access(file, F_OK)) return;
-	printf("\e[33;1m=====%s=====\e[0m\n", file);
+char System(const char* file, int test){
+	struct stat st;
+	if(file == NULL || stat(file, &st)) return 0;
 	char *cmd, *pure_name = file_name(file);
 	if(pure_name == NULL){
 		pure_name = malloc(strlen(file) + 1);
-		if(pure_name == NULL) err_ptr();
+		if(pure_name == NULL){
+			printf("Failed to allocate memory...\n");
+			return 0;
+		}
 		strcpy(pure_name, file);
 	}
-	if(!access(file, R_OK)){
+	if(test){
+		char *tst;
+		tst = malloc(strlen(pure_name) + 6);
+		if(tst == NULL){
+			printf("Failed to allocate memory for %s.test\n", pure_name);
+			test = 0;
+		}
+		else{
+			sprintf(tst, "%s.test", pure_name);
+			if(access(tst, F_OK)){
+				free(tst);
+				test = 0;
+			}
+		}
+		if(tst != NULL)
+			free(tst);
+	}
+	if(!isDir(file) && !access(file, X_OK)){
+		printf("\e[33;1m===== %s =====\e[0m\n", file);
+		int len = strlen(file) + 3 + test * (strlen(pure_name) + 8);
+		cmd = malloc(len);
+		if(cmd == NULL){
+			free(pure_name);
+			printf("Failed to allocate memory...\n");
+			return 0;
+		}
+		if(!test)
+			snprintf(cmd, len, "./%s", file);
+		else
+			snprintf(cmd, len, "./%s < %s.test", file, pure_name);
+	}
+	else if(!access(pure_name, X_OK)){
+		printf("\e[33;1m===== %s =====\e[0m\n", pure_name);
+		int len = strlen(pure_name) * (1 + test) + test * 8 + 3;
+		cmd = malloc(len);
+		if(cmd == NULL){
+			free(pure_name);
+			printf("Failed to allocate memory...\n");
+			return 0;
+		}
+		if(!test)
+			snprintf(cmd, len, "./%s", pure_name);
+		else
+			snprintf(cmd, len, "./%s < %s.test", pure_name, pure_name);
+	}
+	else if(!isDir(file) && !access(file, R_OK)){
+		char shebang[1001] = {0};
 		FILE *f;
 		f = fopen(file, "r");
 		if(f == NULL){
-			printf("Cannot find %s\n", file);
-			return;
+			printf("Failed to open file \"%s\"\n", file);
+			free(pure_name);
+			return 0;
 		}
-		char shebang[10001] = {0};
-		fgets(shebang, 10000, f);
-		if(strlen(shebang) > 0 && shebang[strlen(shebang) - 1] == '\n')
-			shebang[strlen(shebang) - 1] = 0;
-		if(strlen(shebang) > 2 && shebang[0] == '#' && shebang[1] == '!'){
-			cmd = malloc(strlen(shebang) + strlen(file));
+		fgets(shebang, 1000, f);
+		if(strlen(shebang) > 2 && strncmp(shebang, "#!", 2) == 0){
+			printf("\e[33;1m===== %s =====\e[0m\n", file);
+			int len = strlen(shebang) + strlen(file) + test * (8 + strlen(pure_name));
+			cmd = malloc(len);
 			if(cmd == NULL){
-				if(f != NULL)
-					fclose(f);
-				err_ptr();
+				free(pure_name);
+				printf("Failed to allocate memory...\n");
+				return 0;
 			}
-			snprintf(cmd, strlen(shebang) + strlen(file), "%s %s", shebang + 2, file);
-		}
-		else if(!access(pure_name, X_OK)){
-			fclose(f);
-			cmd = malloc(strlen(pure_name) + 3);
-			if(cmd == NULL) err_ptr();
-			snprintf(cmd, strlen(pure_name) + 3, "./%s", pure_name);
+			if(!test)
+				snprintf(cmd, len, "%s %s", shebang + 2, file);
+			else
+				snprintf(cmd, len, "%s %s < %s.test", shebang + 2, file, pure_name);
 		}
 		else{
-			if(pure_name != NULL) free(pure_name);
-			printf("**\"%s\" is not an executable file**\n", file);
-			fclose(f);
-			return;
+			printf("\"%s\" is not an executable file...\n", file);
+			free(pure_name);
+			return 0;
 		}
-		if(f != NULL)
-			fclose(f);
-		if(test){
-			char *ins;
-			if(pure_name == NULL){
-				if(cmd != NULL)
-					free(cmd);
-				exit(1);
-			}
-			ins = realloc(pure_name, strlen(pure_name) + 6);
-			if(ins == NULL){
-				if(cmd != NULL)
-					free(cmd);
-				free(pure_name);
-				err_ptr();
-			}
-			pure_name = ins;
-			strcat(pure_name, ".test");
-			if(!access(pure_name, R_OK)){
-				ins = realloc(cmd, strlen(cmd) + strlen(pure_name) + 4);
-				if(ins == NULL){
-					if(cmd != NULL)
-						free(cmd);
-					free(pure_name);
-					err_ptr();
-				}
-				cmd = ins;
-				strcat(cmd, " < ");
-				strcat(cmd, pure_name);
-			}
-		}
-		system(cmd);
-		free(cmd);
 	}
-	else
-		printf("File cannot be executed <try chmod +x %s> or its not executable file\n", file);
+	else{
+		printf("\"%s\" is not an executable file...\n", file);
+		free(pure_name);
+		return 0;
+	}
+	system(cmd);
+	free(cmd);
 	free(pure_name);
-}
-
-void free_content(char **content){
-	int i = 0;
-	if(content != NULL){
-		while(content[i] != NULL){
-			free(content[i]);
-			i++;
-		}
-		free(content);
-	}
+	return 1;
 }
 
 int main(int argc, char* argv[]){
 	int i = 0;
-	char **content = dir_content();
-	if(content == NULL) err_ptr();
 	if(argc == 1 || (argc == 2 && strcmp(argv[1], "-test") == 0)){
+		char **content = dir_exe_content();
+		if(content == NULL) err_ptr();
 		while(content[i] != NULL){
-			System(content[i], argc - 1);
+			if(!System(content[i], argc - 1)){
+				printf("Stop\n");
+				free_content(content);
+				return 1;
+			}
 			i++;
 		}
 		free_content(content);
 		return 0;
 	}
-	if(strcmp(argv[1], "-test") == 0 || argv[1][0] != '-'){
-		for(i = 1 + (strcmp(argv[1], "-test") == 0) ; i < argc ; i++)
-			System(argv[i], strcmp(argv[1], "-test") == 0);
-		free_content(content);
+	if((argc > 1 && argv[1][0] != '-') || (argc > 2 && strcmp(argv[1], "-test") == 0)){
+		for(i = 1 + (strcmp(argv[1], "-test") == 0) ; i < argc ; i++){
+			if(isExecutable(argv[i])){
+				if(!System(argv[i], strcmp(argv[1], "-test") == 0)){
+					printf("Stop\n");
+					return 1;
+				}
+			}
+			else
+				printf("%s is not executable files...\n", argv[i]);
+		}
 		return 0;
 	}
 	char type[strlen(argv[1])];
 	strcpy(type, argv[1] + 1);
 	if(argc == 2 || (argc == 3 && strcmp(argv[2], "-test") == 0)){
+		char** content = dir_type_content(type);
 		i = 0;
 		while(content[i] != NULL){
-			if(strcmp(type, file_type(content[i])) == 0)
-				System(content[i], argc - 2);
-			i++;
+			if(strcmp(type, file_type(content[i])) == 0){
+				if(!System(content[i], argc - 2)){
+					free_content(content);
+					printf("Stop\n");
+					return 1;
+				}
+				i++;
+			}
 		}
 		free_content(content);
 		return 0;
 	}
-	if(argc > 2 && strcmp(argv[2], "-test") != 0)
-		for(i = 2 ; i < argc ; i++)
-			System(argv[i], 0);
-	else if(argc > 3 && strcmp(argv[2], "-test") == 0)
-		for(i = 3 ; i < argc ; i++)
-			System(argv[i], 1);
 	else{
 		printf("Invalid input!\n");
-		free_content(content);
 		return 1;
 	}
-	free_content(content);
 	return 0;
 }
