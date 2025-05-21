@@ -23,6 +23,8 @@ int main(int argc, char* argv[]){
 		for(i = 0 ; temp[i] != 0 ; i++){
 			if(temp[i] == '\n')
 				printf("\e[34m\\n\e[0m");
+			else if(isspace(temp[i]))
+				printf("\e[100m%c\e[0m", temp[i]);
 			else if(!isalpha(temp[i]) && !isspace(temp[i]) && !isdigit(temp[i]) && !ispunct(temp[i]))
 				printf("\e[41m%c(ASCII: %d)\e[0m", temp[i], temp[i]);
 			else
