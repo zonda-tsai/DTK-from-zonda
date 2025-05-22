@@ -1,7 +1,10 @@
 **IDE-from-zonda** is an easy IDE so it's not that powerful.  
-You could download by `git clone https://github.com/zonda-tsai/IDE-from-zonda` and initialize by `bash IDE-from-zonda/initial.sh`  
+You could download and initialize by 
+```
+git clone https://github.com/zonda-tsai/IDE-from-zonda
+initialize by `bash IDE-from-zonda/initial.sh
+```  
 ## settings [arg]
-   - **-initial**   : Initial the IDE **(YOU DON'T NEED THIS! initial.sh have done that for you)**  
    - **-reset**     : Reset the IDE  
    - **-uninstall** : Uninstall this IDE
    - **--help**     : Show this README.md
