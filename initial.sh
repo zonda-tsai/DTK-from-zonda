@@ -13,7 +13,7 @@ gcc -O3 "$DIR/char_ins.c" -o "$DIR/char_ins" >/dev/null 2>&1
 mkdir -p "$HOME/bin"
 mv "$DIR/settings" "$DIR/compile" "$DIR/run" "$DIR/char_ins" "$HOME/bin"
 mkdir -p "$HOME/.zonda.ide"
-mv "$DIR/*" "$HOME/.zonda.ide"
+mv "$DIR/settings.c" "$DIR/compile.c" "$DIR/run.c" "$DIR/char_ins.c" "$DIR/README.md" "$HOME/.zonda.ide"
 
 if ! grep -q 'export PATH="$HOME/bin:$PATH"' "$HOME/.bashrc"; then
     echo 'export PATH="$HOME/bin:$PATH"' >> "$HOME/.bashrc"
