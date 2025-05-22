@@ -148,7 +148,7 @@ int main(int argc, char* argv[]){
 			makefile_Cpp_prj();
 		}
 		else if(strcmp(argv[1], "-reset") == 0){
-			system("rm -rf ~/.zonda.ide");
+			system("rm -rf ~/.zonda.ide/makefiles");
 			make_dir();
 			makefile_C();
 			makefile_Cpp();
