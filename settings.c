@@ -159,7 +159,6 @@ int main(int argc, char* argv[]){
 			char ch;
 			printf("Second check for uninstalling? (Y/N) ");
 			ch = getchar();
-			getchar();
 			if(ch == 'N' || ch == 'n'){
 				printf("Stopped\n");
 				return 0;
