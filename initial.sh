@@ -21,4 +21,5 @@ fi
 source $HOME/.bashrc
 export PATH="$HOME/bin:$PATH"
 
+rm -rf "$DIR"
 printf "\e[33;1m[FINISHED]\e[0m\n"
