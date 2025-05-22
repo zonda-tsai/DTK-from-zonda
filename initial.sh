@@ -2,6 +2,7 @@
 
 sudo apt update
 sudo apt install -y gcc g++ make valgrind
+sudo snap install glow
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
