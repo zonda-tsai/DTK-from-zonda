@@ -164,9 +164,10 @@ int main(int argc, char* argv[]){
 				printf("Stopped\n");
 				return 0;
 			}
-			else if(ch == 'Y' || ch == 'y'){
+			else if(ch == '\n' || ch == 'Y' || ch == 'y'){
 				printf("Uninstalling...\n");
 				system("rm -f ~/bin/compile ~/bin/run ~/bin/settings ~/bin/char_ins");
+				system("rm -rf ~/.zonda.ide");
 				printf("Thanks for using this.\nThis can be downloaded by \"git clone https://github.com/zonda-tsai/IDE-from-zonda\" if you want to.\n");
 				return 0;
 			}
