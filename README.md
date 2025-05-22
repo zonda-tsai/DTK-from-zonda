@@ -2,7 +2,7 @@
 You could download and initialize by 
 ```
 git clone https://github.com/zonda-tsai/IDE-from-zonda
-initialize by `bash IDE-from-zonda/initial.sh
+bash IDE-from-zonda/initial.sh
 ```  
 ## settings [arg]
    - **-reset**     : Reset the IDE  
