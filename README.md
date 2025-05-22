@@ -1,5 +1,5 @@
 **IDE-from-zonda** is an easy IDE so it's not that powerful.  
-You could download by **git clone https://github.com/zonda-tsai/IDE-from-zonda** and **bash IDE-from-zonda/initial.sh**  
+You could download by "**git clone https://github.com/zonda-tsai/IDE-from-zonda**" and "**bash IDE-from-zonda/initial.sh**"  
 # settings [arg]  
 &emsp;-initial   : Initial the IDE **(YOU DON'T NEED THIS! initial.sh have done that for you)**  
 &emsp;-reset     : Reset the IDE  
