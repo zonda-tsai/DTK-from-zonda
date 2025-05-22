@@ -9,8 +9,8 @@
 &emsp;[arg n] : for n >= 1, you can assign specific files.  
 # run [args]
 &emsp;run                 : run all. **It'll include all files in that directory**
-&emsp;run -char_ins       : run with ascii inspector.
-&emsp;run -valgrind       : run with valgrind, memory inspector.
+&emsp;run -char_ins       : run with ascii inspector.  
+&emsp;run -valgrind       : run with valgrind, memory inspector.  
 &emsp;run -test           : run all with testfile. e.g. a =(find)=> a.test and ./a < a.test  
 &emsp;run -type           : run all the files with that type. e.g. run -c (-test)  
 &emsp;run executable_file : run all assigned executable_file (normal file with shebang is also available ~)  
