@@ -155,6 +155,9 @@ int main(int argc, char* argv[]){
 			makefile_C_prj();
 			makefile_Cpp_prj();
 		}
+		else if(strcmp(argv[1], "--help") == 0){
+			system("glow ~/.zonda.ide/README.md");
+		}
 		else if(strcmp(argv[1], "-uninstall") == 0){
 			char ch;
 			printf("Second check for uninstalling? (Y/N) ");
