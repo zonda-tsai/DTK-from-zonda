@@ -15,7 +15,9 @@ gcc -O3 "$DIR/tfmanager.c" -o "$DIR/tfmanager" >/dev/null 2>&1
 mkdir -p "$HOME/bin"
 mv "$DIR/settings" "$DIR/compile" "$DIR/run" "$DIR/char_ins" "$DIR/tfmanager" "$HOME/bin"
 mkdir -p "$HOME/.zonda.ide"
-mv "$DIR/settings.c" "$DIR/compile.c" "$DIR/run.c" "$DIR/char_ins.c" "$DIR/tfmanager.c" "$DIR/README.md" "$HOME/.zonda.ide"
+mv "$DIR/README.md" "$HOME/.zonda.ide"
+mkdir -p "$HOME/.zonda.ide/sources"
+mv "$DIR/settings.c" "$DIR/compile.c" "$DIR/run.c" "$DIR/char_ins.c" "$DIR/tfmanager.c" "$HOME/.zonda.ide/sources"
 
 if ! grep -q 'export PATH="$HOME/bin:$PATH"' "$HOME/.bashrc"; then
     echo 'export PATH="$HOME/bin:$PATH"' >> "$HOME/.bashrc"
