@@ -104,12 +104,13 @@ char** dir_type_content(char* type){
 	}
 	if(n == 0){
 		closedir(dir);
-		return NULL;
+		printf("No .%s type file...\n", type);
+		exit(1);
 	}
 	rewinddir(dir);
 	temp = malloc((n + 1) * sizeof(char*));
 	i = 0;
-	if(temp == NULL) err_ptr();
+	if(temp == NULL) return NULL;
 	while((entry = readdir(dir)) != NULL && i < n){
 		if(stat(entry->d_name, &st) != 0 || strcmp(file_type(entry->d_name), type) != 0)
 			continue;
@@ -142,10 +143,11 @@ char** dir_exe_content(){
 	}
 	if(n == 0){
 		closedir(dir);
-		return NULL;
+		printf("No executable file...\n");
+		exit(1);
 	}
 	temp = malloc((n + 1) * sizeof(char*));
-	if(temp == NULL) err_ptr();
+	if(temp == NULL) return NULL;
 	rewinddir(dir);
 	while((entry = readdir(dir)) != NULL && i < n){
 		if(!isExecutable(entry->d_name))
@@ -353,6 +355,8 @@ int main(int argc, char* argv[]){
 		char type[strlen(argv[1])];
 		strcpy(type, argv[1] + 1);
 		char** content = dir_type_content(type);
+		if(content == NULL)
+			err_ptr();
 		for(i = 0 ; content[i] != NULL ; i++){
 			if(!System(content[i], test, valgrind, char_ins)){
 				printf("Stop\n");
