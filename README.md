@@ -1,4 +1,4 @@
-# IDE-from-zonda
+**IDE-from-zonda**
 *This is an easy IDE so it's not that powerful.*  
 # settings [arg]  
 &emsp;-initial   : Initial the IDE **(YOU DON'T NEED THIS! initial.sh have done that for you)**  
@@ -13,5 +13,3 @@
 &emsp;run -test           : run all with testfile. e.g. a =(find)=> a.test and ./a < a.test  
 &emsp;run -type           : run all the files with that type. e.g. run -c (-test)  
 &emsp;run executable_file : run all assigned executable_file (normal file with shebang is also available ~)  
-**char_ins [arg]**
-&emsp;file_name : inspect the space and the characters for a file, so please make your program output to a text file, and use this to inspect.
