@@ -23,12 +23,18 @@ char* file_name(const char *a){
 	if(a == NULL || a[0] == 0)
 		return NULL;
 	int i;
+	char *temp;
 	for(i = strlen(a) - 1 ; i >= 0 ; i--)
 		if(a[i] == '.')
 			break;
-	if(i == -1 || i == 0)
-		return NULL;
-	char *temp = (char*)malloc(i + 1);
+	if(i == -1 || i == 0){
+		temp = malloc(1);
+		if(temp == NULL)
+			return NULL;
+		strcpy(temp, "");
+		return temp;
+	}
+	temp = (char*)malloc(i + 1);
 	if(temp == NULL)
 		return NULL;
 	strncpy(temp, a, i);
@@ -130,10 +136,11 @@ int main(int argc, char* argv[]){
 	if(argc > 1 && argv[1][0] != '-'){
 		char *type, *type_prj, *name, ins;
 		for(i = 1 ; i < argc ; i++){
-			if(file_name(argv[i]) != NULL)
-				name = file_name(argv[i]);
-			else
-				name = NULL;
+			name = file_name(argv[i]);
+			if(strcmp(name, "") == 0){
+				printf("Unable to compile %s...\n", argv[i]);
+				continue;
+			}
 			if(name == NULL){
 				printf("Failed to allocate memory...\n");
 				return 1;
@@ -166,6 +173,10 @@ int main(int argc, char* argv[]){
 			free(type_prj);
 			free(name);
 		}
+	}
+	else{
+		printf("Invalid input!\n");
+		return 1;
 	}
 	return 0;
 }
