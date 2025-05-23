@@ -23,7 +23,7 @@ bash IDE-from-zonda/initial.sh
    - `[arg n]` : for n >= 1, you can assign specific files.
 
 ## run
-`-type`, `-char_ins`, `-valgrind` and `-test` can be suffixed at the same time.  
+   - `-type`, `-char_ins`, `-valgrind` and `-test` can be suffixed at the same time.  
 &emsp;// ***Type should always be the first argument after run***  
    - ``run``                 : run all. **It'll include all files in that directory**  
    - ``run -char_ins``       : run with ascii inspector.  
