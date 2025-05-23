@@ -157,6 +157,7 @@ int main(int argc, char* argv[]){
 		}
 		else if(strcmp(argv[1], "--help") == 0){
 			system("glow ~/.zonda.ide/README.md");
+			return 1;
 		}
 		else if(strcmp(argv[1], "-uninstall") == 0){
 			char ch;
