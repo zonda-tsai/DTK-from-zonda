@@ -3,21 +3,26 @@
 #include <string.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 void make_dir(){
 	const char *home = getenv("HOME");
 	char path[1001] = {0};
+	struct stat st;
 	snprintf(path, sizeof(path), "%s/.zonda.ide", home);
-	if(mkdir(path, 0755) != 0){
-		printf("Unable to make directory about infos!\n");
-		exit(1);
-	}
+	if(stat(path, &st))
+		if(mkdir(path, 0755) != 0){
+			printf("Unable to make directory about infos!\n");
+			exit(1);
+		}
 	snprintf(path, sizeof(path), "%s/.zonda.ide/makefiles", home);
-	if(mkdir(path, 0755) != 0){
-		printf("Unable to make directory about makefiles!\n");
-		exit(1);
-	}
+	if(stat(path, &st))
+		if(mkdir(path, 0755) != 0){
+			printf("Unable to make directory about makefiles!\n");
+			exit(1);
+		}
 }
+
 void makefile_C(){
 	const char *home = getenv("HOME");
 	char path[1001] = {0};
@@ -27,21 +32,22 @@ void makefile_C(){
 	fprintf(f, ".SILENT:\n");
 	fprintf(f, "CC = gcc\n");
 	fprintf(f, "FLAGS = -std=c11 -Wall -Wextra -O2\n");
-	fprintf(f, "LDFLAGS = \n");
+	fprintf(f, "LDFLAGS = -lm\n");
 	fprintf(f, "SRC1 = $(wildcard *.c)\n");
 	fprintf(f, "SRC2 = $(wildcard *.c/)\n");
 	fprintf(f, "PRJS = $(SRC2:/=)\n");
 	fprintf(f, "TARGETS = $(basename $(filter-out $(PRJS), $(SRC1)))\n\n");
 	fprintf(f, ".PHONY: all clean\n");
 	fprintf(f, "all: $(TARGETS)\n");
-	fprintf(f, "%%: %%.o\n");
-	fprintf(f, "\t$(CC) $(FLAGS) $^ -o $@ $(LDFLAGS)\n");
+	fprintf(f, "$(TARGETS): %% : %%.o\n");
+	fprintf(f, "\t$(CC) $(FLAGS) $< -o $@ $(LDFLAGS)\n");
 	fprintf(f, "%%.o: %%.c\n");
 	fprintf(f, "\t$(CC) $(FLAGS) -c $< -o $@\n\n");
 	fprintf(f, "clean:\n");
 	fprintf(f, "\trm -f $(TARGETS) *.o\n");
 	fclose(f);
 }
+
 void makefile_C_prj(){
 	const char *home = getenv("HOME");
 	char path[1001] = {0};
@@ -51,7 +57,7 @@ void makefile_C_prj(){
 	fprintf(f, ".SILENT:\n");
 	fprintf(f, "CC = gcc\n");
 	fprintf(f, "FLAGS = -std=c11 -Wall -Wextra -g -O2\n");
-	fprintf(f, "LDFLAGS =\n");
+	fprintf(f, "LDFLAGS = -lm\n");
 	fprintf(f, "ALL_DEPS =\n\n");
 	fprintf(f, "DIR = $(sort $(patsubst %%/,%%,$(wildcard *.c/)))\n");
 	fprintf(f, "TARGET = $(notdir $(basename $(DIR)))\n\n");
@@ -75,6 +81,7 @@ void makefile_C_prj(){
 	fprintf(f, "\t$(foreach dir,$(DIR), rm -f $(wildcard $(dir)/*.o) $(wildcard $(dir)/*.d);)\n");
 	fclose(f);
 }
+
 void makefile_Cpp(){
 	const char *home = getenv("HOME");
 	char path[1001] = {0};
@@ -84,14 +91,14 @@ void makefile_Cpp(){
 	fprintf(f, ".SILENT:\n");
 	fprintf(f, "CC = g++\n");
 	fprintf(f, "FLAGS = -std=c++11 -Wall -Wextra -O2\n");
-	fprintf(f, "LDFLAGS = \n");
+	fprintf(f, "LDFLAGS = -lm\n");
 	fprintf(f, "SRC1 = $(wildcard *.cpp)\n");
 	fprintf(f, "SRC2 = $(wildcard *.cpp/)\n");
 	fprintf(f, "PRJS = $(SRC2:/=)\n");
 	fprintf(f, "TARGETS = $(basename $(filter-out $(PRJS), $(SRC1)))\n\n");
 	fprintf(f, ".PHONY: all clean\n");
 	fprintf(f, "all: $(TARGETS)\n");
-	fprintf(f, "%%: %%.o\n");
+	fprintf(f, "$(TARGETS): %% : %%.o\n");
 	fprintf(f, "\t$(CC) $(FLAGS) $^ -o $@ $(LDFLAGS)\n");
 	fprintf(f, "%%.o: %%.cpp\n");
 	fprintf(f, "\t$(CC) $(FLAGS) -c $< -o $@\n\n");
@@ -99,6 +106,7 @@ void makefile_Cpp(){
 	fprintf(f, "\trm -f $(TARGETS) *.o\n");
 	fclose(f);
 }
+
 void makefile_Cpp_prj(){
 	const char *home = getenv("HOME");
 	char path[1001] = {0};
@@ -108,7 +116,7 @@ void makefile_Cpp_prj(){
 	fprintf(f, ".SILENT:\n");
 	fprintf(f, "CC = g++\n");
 	fprintf(f, "FLAGS = -std=c++11 -Wall -Wextra -g -O2\n");
-	fprintf(f, "LDFLAGS =\n");
+	fprintf(f, "LDFLAGS = -lm\n");
 	fprintf(f, "ALL_DEPS =\n\n");
 	fprintf(f, "DIR = $(sort $(patsubst %%/,%%,$(wildcard *.cpp/)))\n");
 	fprintf(f, "TARGET = $(notdir $(basename $(DIR)))\n\n");
@@ -148,7 +156,7 @@ int main(int argc, char* argv[]){
 			makefile_Cpp_prj();
 		}
 		else if(strcmp(argv[1], "-reset") == 0){
-			system("rm -rf ~/.zonda.ide/makefiles");
+			system("rm -f ~/.zonda.ide/makefiles/*");
 			make_dir();
 			makefile_C();
 			makefile_Cpp();
@@ -156,8 +164,15 @@ int main(int argc, char* argv[]){
 			makefile_Cpp_prj();
 		}
 		else if(strcmp(argv[1], "--help") == 0){
-			system("glow ~/.zonda.ide/README.md");
-			return 1;
+			char temp[strlen(home) + strlen("/.zonda.ide/README.md") + 1];
+			sprintf(temp, "%s/.zonda.ide/README.md", home);
+			if(!access(temp, R_OK))
+				system("glow ~/.zonda.ide/README.md");
+			else{
+				printf("FILE: README.md lost...\n");
+				return 1;
+			}
+			return 0;
 		}
 		else if(strcmp(argv[1], "-uninstall") == 0){
 			char ch;

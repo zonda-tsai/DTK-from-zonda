@@ -122,6 +122,7 @@ void merge(char **file){
 		fprintf(m, "===== %s =====\n", file[i]);
 		while(fgets(temp, 100000, f) != NULL)
 			fputs(temp, m);
+		fputc('\n', m);
 		fclose(f);
 		i++;
 	}
