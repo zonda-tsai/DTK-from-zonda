@@ -86,7 +86,7 @@ int main(int argc, char* argv[]){
 	}
 	char ins;
 	int i;
-	if(argc == 3 && argv[1][0] == '-' && strcmp(argv[2], "-clean")){
+	if(argc == 3 && argv[1][0] == '-' && !strcmp(argv[2], "clean")){
 		ins = makefile(argv[1]);
 		char temp[strlen(argv[1]) + 5];
 		snprintf(temp, strlen(argv[1]) + 5, "%s-prj", argv[1]);
@@ -133,7 +133,7 @@ int main(int argc, char* argv[]){
 		}
 		return 0;
 	}
-	if(argc > 1 && argv[1][0] != '-'){
+	else if(argc > 1 && argv[1][0] != '-'){
 		char *type, *type_prj, *name, ins;
 		for(i = 1 ; i < argc ; i++){
 			name = file_name(argv[i]);
