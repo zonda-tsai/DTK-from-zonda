@@ -156,6 +156,14 @@ int main(int argc, char* argv[]){
 			makefile_Cpp_prj();
 		}
 		else if(strcmp(argv[1], "-reset") == 0){
+			char c;
+			printf("This will initialize the makefiles into only C and C++\n");
+			printf("Second check for reset (Y/N) ");
+			c = getchar();
+			if((c == 'n' || c == 'N') && (c != 'Y' && c != 'y' && c != '\n')){
+				printf("Stopped\n");
+				return 0;
+			}
 			system("rm -f ~/.zonda.ide/makefiles/*");
 			make_dir();
 			makefile_C();
