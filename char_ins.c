@@ -24,7 +24,7 @@ int main(int argc, char* argv[]){
 	unsigned long long n = 0, news = 0, tabs = 0, ctrls = 0, spaces = 0, unknows = 0, normals = 0;
 	char temp[1000001] = {0};
 	while(fgets(temp, 1000000, stdin) != NULL){
-		for(i = 0 ; temp[i] != 0 ; i++){
+		for(i = 0 ; temp[i] != 0 && i < 1000000 ; i++){
 			if(temp[i] == '\n'){
 				news++;
 				printf("\e[34m\\n\e[0m");
@@ -51,7 +51,8 @@ int main(int argc, char* argv[]){
 			}
 		}
 		n += i;
-		printf("\e[34m\\0\e[0m\n");
+		if(temp[i] == 0)
+			printf("\e[34m\\0\e[0m\n");
 	}
 	printf("\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n");
 	printf("| Tabs                             : %-10llu\n", tabs);
