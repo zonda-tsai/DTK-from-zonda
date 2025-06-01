@@ -15,19 +15,19 @@ void help(){
 void ascii(){
 	int i, j, cntrl = 0;
 	unsigned char ctrl[33][5] = {"\\0", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "\\a", "\\b", "\\t", "\\n", "\\v", "\\f", "\\r", "SO", "SI", "DLE", "DC1", "DC2", "DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS", "RS", "US", "DEL"};
-	printf("  \e[33m");
+	printf("    \e[33m");
 	for(i = 0 ; i < 16 ; i++)
 		printf("%-5x", i);
-	printf("\e[0m\n");
+	printf("\e[0m\n\n");
 	for(i = 0 ; i < 8 ; i++){
-		printf("\e[33m%-2x\e[0m", i);
+		printf("\e[33m%-4x\e[0m", i);
 		for(j = 0 ; j < 16 ; j++){
 			if(iscntrl((char)(i * 16 + j)))
 				printf("%-5s", ctrl[cntrl++]);
 			else
 				printf("%-5c", (char)(16 * i + j));
 		}
-		printf("\n");
+		printf("\n\n");
 	}
 }
 
