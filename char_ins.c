@@ -45,10 +45,10 @@ int main(int argc, char* argv[]){
 		printf("Invalid input!\n");
 		return 1;
 	}
-	int i;
+	unsigned long long i;
 	unsigned long long n = 0, news = 0, tabs = 0, ctrls = 0, spaces = 0, unknows = 0, normals = 0, returns = 0;
-	unsigned char temp[1000001] = {0};
-	while(fgets((char*)temp, 1000000, stdin) != NULL){
+	char temp[1000001] = {0};
+	while(fgets(temp, 1000000, stdin) != NULL){
 		for(i = 0 ; temp[i] != 0 && i < 1000000 ; i++){
 			if(iscntrl(temp[i])){
 				ctrls++;
@@ -73,13 +73,24 @@ int main(int argc, char* argv[]){
 				else
 					printf("\e[45m\\x%x\e[0m", temp[i]);
 			}
+
 			else if(isspace(temp[i])){
 				spaces++;
 				printf("\e[100m%c\e[0m", temp[i]);
 			}
+
 			else if(!isalpha(temp[i]) && !isdigit(temp[i]) && !ispunct(temp[i])){
-				unknows++;
-				printf("\e[41m\\x%x\e[0m", temp[i]);
+				unsigned long long j = i;
+				while(j < (unsigned long long)strlen(temp) && !isalpha(temp[j]) && !isdigit(temp[j]) && !ispunct(temp[j]) && !iscntrl(temp[j]) && !isspace(temp[j])) j++;
+				char str[j - i + 1];
+				strncpy(str, &temp[i], j - i);
+				str[j - i] = 0;
+				unknows += j - i;
+				printf("\e[41m%s(", str);
+				for(i = i ; i < j - 1 ; i++)
+					printf("\\x%x", (unsigned char)temp[i]);
+				printf(")\e[0m");
+				i = j - 1;
 			}
 			else{
 				normals++;
