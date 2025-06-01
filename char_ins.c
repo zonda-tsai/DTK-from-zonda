@@ -86,11 +86,16 @@ int main(int argc, char* argv[]){
 				strncpy(str, &temp[i], j - i);
 				str[j - i] = 0;
 				unknows += j - i;
-				printf("\e[41m%s(", str);
-				for(i = i ; i < j - 1 ; i++)
-					printf("\\x%x", (unsigned char)temp[i]);
-				printf(")\e[0m");
-				i = j - 1;
+				if(j - i > 1){
+					printf("\e[41m%s(", str);
+					for(i = i ; i < j - 1 ; i++)
+						printf("\\x%x", (unsigned char)temp[i]);
+					printf(")\e[0m");
+					i = j - 1;
+				}
+				else{
+					printf("\e[41m\\x%x\e[0m", (unsigned char)temp[i]);
+				}
 			}
 			else{
 				normals++;
