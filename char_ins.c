@@ -80,22 +80,8 @@ int main(int argc, char* argv[]){
 			}
 
 			else if(!isalpha(temp[i]) && !isdigit(temp[i]) && !ispunct(temp[i])){
-				unsigned long long j = i;
-				while(j < (unsigned long long)strlen(temp) && !isalpha(temp[j]) && !isdigit(temp[j]) && !ispunct(temp[j]) && !iscntrl(temp[j]) && !isspace(temp[j])) j++;
-				char str[j - i + 1];
-				strncpy(str, &temp[i], j - i);
-				str[j - i] = 0;
-				unknows += j - i;
-				if(j - i > 1){
-					printf("\e[41m%s(", str);
-					for(i = i ; i < j - 1 ; i++)
-						printf("\\x%x", (unsigned char)temp[i]);
-					printf(")\e[0m");
-					i = j - 1;
-				}
-				else{
-					printf("\e[41m\\x%x\e[0m", (unsigned char)temp[i]);
-				}
+				unknows++;
+				printf("\e[41m\\x%x\e[0m", (unsigned char)temp[i]);
 			}
 			else{
 				normals++;
