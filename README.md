@@ -33,7 +33,8 @@ bash IDE-from-zonda/initial.sh
    - ``run executable_file`` : run all assigned executable_file and files prefixed shebang
 
 ## char_ins
-   - ``--help`` : show the usage of char_ins
+   - ``--help``        : show the usage of char_ins
+   - ``--ascii_table`` : show the ascii table (in HEX)  
 
 ## tfmanager
    - ``-merge``  : merge all .test file into all.test  
