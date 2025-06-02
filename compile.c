@@ -86,28 +86,13 @@ int main(int argc, char* argv[]){
 	}
 	char ins;
 	int i;
-	if(argc == 3 && argv[1][0] == '-' && !strcmp(argv[2], "clean")){
-		ins = makefile(argv[1]);
-		char temp[strlen(argv[1]) + 5];
-		snprintf(temp, strlen(argv[1]) + 5, "%s-prj", argv[1]);
-		switch(ins){
-		case 0:
-			printf("~/.zonda.ide/makefiles/makefile%s doesn't exist...\n", argv[1]);
-			printf("~/.zonda.ide/makefiles/makefile%s-prj doesn't exist...\n", argv[1]);
-			return 1;
-		case 1:
-			make(argv[1], "clean");
+	for(i = 1 ; i < argc ; i++){
+		if(!strcmp(argv[i], "clean") == 0)
 			break;
-		case 2:
-			make(temp, "clean");
-			break;
-		case 3:
-			make(argv[1], "clean");
-			make(temp, "clean");
-			break;
-		}
+		printf("Invalid keyword 'clean' included...\n");
+		return 1;
 	}
-	else if(argc == 2 && argv[1][0] == '-'){
+	if(argc == 2 && argv[1][0] == '-'){
 		if(strlen(argv[1]) > 4 && strncmp(argv[1] + strlen(argv[1]) - 4, "-prj", 4) == 0){
 			printf("Invalid form...\n");
 			return 1;
