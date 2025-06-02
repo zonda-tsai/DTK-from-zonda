@@ -19,7 +19,6 @@ bash IDE-from-zonda/initial.sh
 ## compile
 
    - `[arg 1]` : Types. Initial one only provide c and cpp (e.g. -c, -cpp)  
-       + **Postfix (or suffix) " clean" can clean the executable file for that type.**  
    - `[arg n]` : for n >= 1, you can assign specific files.
 
 ## run
@@ -31,6 +30,9 @@ bash IDE-from-zonda/initial.sh
    - ``run -test``           : run all with testfile. e.g. `./a < a.test`  
    - ``run -type``           : run all the files with that type. e.g. run -c (-test)  
    - ``run executable_file`` : run all assigned executable_file and files prefixed shebang
+
+## clean
+   - This can clean by all makefiles. If you want to clean specific type, add `-type` after it
 
 ## char_ins
    - ``--help``        : show the usage of char_ins
