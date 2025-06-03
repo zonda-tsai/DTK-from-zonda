@@ -5,8 +5,13 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#define ERR_PTR(x)\
+	if(x == NULL){\
+		printf("Failed to write the file...\n");\
+		exit(1);\
+	}
+const char* home = NULL;
 void make_dir(){
-	const char *home = getenv("HOME");
 	char path[1001] = {0};
 	struct stat st;
 	snprintf(path, sizeof(path), "%s/.zonda.ide", home);
@@ -21,14 +26,20 @@ void make_dir(){
 			printf("Unable to make directory about makefiles!\n");
 			exit(1);
 		}
+	snprintf(path, sizeof(path), "%s/.zonda.ide/templates", home);
+	if(stat(path, &st))
+		if(mkdir(path, 0755) != 0){
+			printf("Unable to make directory about templates!\n");
+			exit(1);
+		}
 }
 
 void makefile_C(){
-	const char *home = getenv("HOME");
 	char path[1001] = {0};
 	FILE *f;
 	snprintf(path, sizeof(path), "%s/.zonda.ide/makefiles/makefile-c", home);
 	f = fopen(path, "w");
+	ERR_PTR(f);
 	fprintf(f, ".SILENT:\n");
 	fprintf(f, "CC = gcc\n");
 	fprintf(f, "FLAGS = -std=c11 -Wall -Wextra -O2\n");
@@ -49,11 +60,11 @@ void makefile_C(){
 }
 
 void makefile_C_prj(){
-	const char *home = getenv("HOME");
 	char path[1001] = {0};
 	FILE *f;
 	snprintf(path, sizeof(path), "%s/.zonda.ide/makefiles/makefile-c-prj", home);
 	f = fopen(path, "w");
+	ERR_PTR(f);
 	fprintf(f, ".SILENT:\n");
 	fprintf(f, "CC = gcc\n");
 	fprintf(f, "FLAGS = -std=c11 -Wall -Wextra -g -O2\n");
@@ -83,11 +94,11 @@ void makefile_C_prj(){
 }
 
 void makefile_Cpp(){
-	const char *home = getenv("HOME");
 	char path[1001] = {0};
 	FILE *f;
 	snprintf(path, sizeof(path), "%s/.zonda.ide/makefiles/makefile-cpp", home);
 	f = fopen(path, "w");
+	ERR_PTR(f);
 	fprintf(f, ".SILENT:\n");
 	fprintf(f, "CC = g++\n");
 	fprintf(f, "FLAGS = -std=c++11 -Wall -Wextra -O2\n");
@@ -108,11 +119,11 @@ void makefile_Cpp(){
 }
 
 void makefile_Cpp_prj(){
-	const char *home = getenv("HOME");
 	char path[1001] = {0};
 	FILE *f;
 	snprintf(path, sizeof(path), "%s/.zonda.ide/makefiles/makefile-cpp-prj", home);
 	f = fopen(path, "w");
+	ERR_PTR(f);
 	fprintf(f, ".SILENT:\n");
 	fprintf(f, "CC = g++\n");
 	fprintf(f, "FLAGS = -std=c++11 -Wall -Wextra -g -O2\n");
@@ -141,8 +152,51 @@ void makefile_Cpp_prj(){
 	fclose(f);
 }
 
+void Template(){
+	char path[1001] = {0};
+	FILE *f;
+	snprintf(path, 1000, "%s/.zonda.ide/templates/c", home);
+	f = fopen(path, "w");
+	ERR_PTR(f);
+	fprintf(f, "#include <stdio.h>\n");
+	fprintf(f, "#include <stdlib.h>\n\n");
+	fprintf(f, "int main(int argc, char* argv[]){\n\n\treturn 0;\n}");
+	fclose(f);
+	snprintf(path, 1000, "%s/.zonda.ide/templates/cpp", home);
+	f = fopen(path, "w");
+	ERR_PTR(f);
+	fprintf(f, "#include <iostream>\n");
+	fprintf(f, "using namespace std;\n\n");
+	fprintf(f, "int main(int argc, char* argv[]){\n\n\treturn 0;\n}");
+	fclose(f);
+	snprintf(path, 1000, "%s/.zonda.ide/templates/h", home);
+	f = fopen(path, "w");
+	ERR_PTR(f);
+	fprintf(f, "#ifndef _H\n");
+	fprintf(f, "#define _H\n");
+	fprintf(f, "#endif");
+	fclose(f);
+	snprintf(path, 1000, "%s/.zonda.ide/templates/hpp", home);
+	f = fopen(path, "w");
+	ERR_PTR(f);
+	fprintf(f, "#ifndef _HPP\n");
+	fprintf(f, "#define _HPP\n");
+	fprintf(f, "#endif");
+	fclose(f);
+	snprintf(path, 1000, "%s/.zonda.ide/templates/sh", home);
+	f = fopen(path, "w");
+	ERR_PTR(f);
+	fprintf(f, "#!/bin/bash\n");
+	fclose(f);
+	snprintf(path, 1000, "%s/.zonda.ide/templates/py", home);
+	f = fopen(path, "w");
+	ERR_PTR(f);
+	fprintf(f, "#!/usr/bin/env python3\n");
+	fclose(f);
+}
+
 int main(int argc, char* argv[]){
-	const char *home = getenv("HOME");
+	home = getenv("HOME");
 	if(home == NULL){
 		printf("Environment Variables \"HOME\" Undefined!\n");
 		exit(1);
@@ -154,28 +208,48 @@ int main(int argc, char* argv[]){
 			makefile_C_prj();
 			makefile_Cpp();
 			makefile_Cpp_prj();
+			Template();
 		}
 		else if(strcmp(argv[1], "-reset") == 0){
 			char c;
 			printf("This will initialize the makefiles into only C and C++\n");
 			printf("Second check for reset (Y/N) ");
 			c = getchar();
-			if((c == 'n' || c == 'N') && (c != 'Y' && c != 'y' && c != '\n')){
+			if((c == 'n' || c == 'N') || (c != 'Y' && c != 'y' && c != '\n')){
 				printf("Stopped\n");
 				return 0;
 			}
-			system("rm -f ~/.zonda.ide/makefiles/*");
+			char *cmd = NULL;
+			cmd = malloc(10001);
+			if(cmd == NULL){
+				printf("Failed to allocate memory...\n");
+				return 1;
+			}
+			snprintf(cmd, 10000, "rm -f %s/.zonda.ide/makefiles/*", home);
+			system(cmd);
+			snprintf(cmd, 10000, "rm -f %s/.zonda.ide/templates/*", home);
+			system(cmd);
+			free(cmd);
 			make_dir();
 			makefile_C();
 			makefile_Cpp();
 			makefile_C_prj();
 			makefile_Cpp_prj();
+			Template();
 		}
 		else if(strcmp(argv[1], "--help") == 0){
 			char temp[strlen(home) + strlen("/.zonda.ide/README.md") + 1];
-			sprintf(temp, "%s/.zonda.ide/README.md", home);
-			if(!access(temp, R_OK))
-				system("glow ~/.zonda.ide/README.md");
+			snprintf(temp, sizeof(temp), "%s/.zonda.ide/README.md", home);
+			if(!access(temp, R_OK)){
+				char *cmd = malloc(10001);
+				if(cmd == NULL){
+					printf("Failed to allocate memory...\n");
+					return 1;
+				}
+				snprintf(cmd, 10000, "glow %s", temp);
+				system(cmd);
+				free(cmd);
+			}
 			else{
 				printf("FILE: README.md lost...\n");
 				return 1;
@@ -192,8 +266,29 @@ int main(int argc, char* argv[]){
 			}
 			else if(ch == '\n' || ch == 'Y' || ch == 'y'){
 				printf("Uninstalling...\n");
-				system("rm -f ~/bin/compile ~/bin/run ~/bin/settings ~/bin/char_ins ~/bin/tfmanager");
-				system("rm -rf ~/.zonda.ide");
+				char *cmd;
+				cmd = malloc(10001);
+				if(cmd == NULL){
+					printf("Failed to allocate memory...\n");
+					return 1;
+				}
+				snprintf(cmd, 10000, "rm -f %s/bin/compile", home);
+				system(cmd);
+				snprintf(cmd, 10000, "rm -f %s/bin/run", home);
+				system(cmd);
+				snprintf(cmd, 10000, "rm -f %s/bin/settings", home);
+				system(cmd);
+				snprintf(cmd, 10000, "rm -f %s/bin/clean", home);
+				system(cmd);
+				snprintf(cmd, 10000, "rm -f %s/bin/+", home);
+				system(cmd);
+				snprintf(cmd, 10000, "rm -f %s/bin/char_ins", home);
+				system(cmd);
+				snprintf(cmd, 10000, "rm -f %s/bin/tfmanager", home);
+				system(cmd);
+				snprintf(cmd, 10000, "rm -rf %s/.zonda.ide", home);
+				system(cmd);
+				free(cmd);
 				printf("Thanks for using this.\nThis can be downloaded by \"git clone https://github.com/zonda-tsai/IDE-from-zonda\" if you want to.\n");
 				return 0;
 			}
