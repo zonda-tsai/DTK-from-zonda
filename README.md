@@ -16,6 +16,9 @@ bash IDE-from-zonda/initial.sh
    - `-uninstall` : Uninstall this IDE
    - `--help`     : Show this README.md
 
+## +
+   - `file_name.file_type` : Using the template of that file_type.  
+
 ## compile
 
    - `[arg 1]` : Types. Initial one only provide c and cpp (e.g. -c, -cpp)  
