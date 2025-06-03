@@ -69,13 +69,60 @@ char makefile(const char* type){
 
 char make(const char* type, const char* name){
 	int n = (name == NULL) ? 0 : strlen(name);
-	char base[] = "make -f ~/.zonda.ide/makefiles/makefile";
+	char base[10001] = {0};
+	snprintf(base, 10001, "make -f %s/.zonda.ide/makefiles/makefile", home);
 	char cmd[strlen(base) + strlen(type) + n + 2];
 	if(n == 0)
 		snprintf(cmd, strlen(base) + strlen(type) + 1, "%s%s", base, type);
 	else
 		snprintf(cmd, strlen(base) + strlen(type) + n + 2, "%s%s %s", base, type, name);
 	return (system(cmd) == 0);
+}
+
+int make_all(){
+	char *path;
+	path = malloc(10001);
+	if(path == NULL){
+		printf("Failed to allocate memory...\n");
+		return 1;
+	}
+	snprintf(path, 10001, "%s/.zonda.ide/makefiles", home);
+	DIR *dir = opendir(path);
+	if(dir == NULL){
+		free(path);
+		printf("Failed to open %s...\n", path);
+		return 1;
+	}
+	struct dirent *entry;
+	char *cmd = NULL, *makefile = NULL;
+	makefile = malloc(10001);
+	if(makefile == NULL){
+		printf("Failed to allocate memory...\n");
+		free(path);
+		closedir(dir);
+		return 1;
+	}
+	cmd = malloc(10001);
+	if(cmd == NULL){
+		printf("Failed to allocate memory...\n");
+		free(path);
+		closedir(dir);
+		free(makefile);
+		return 1;
+	}
+	while((entry = readdir(dir)) != NULL){
+		if(strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+			continue;
+		snprintf(makefile, 10000, "%s/%s", path, entry->d_name);
+		snprintf(cmd, 10000, "make -f %s", makefile);
+		if(system(cmd))
+			printf("Failed to make : %s\n", entry->d_name);
+	}
+	closedir(dir);
+	free(path);
+	free(makefile);
+	free(cmd);
+	return 0;
 }
 
 int main(int argc, char* argv[]){
@@ -92,7 +139,9 @@ int main(int argc, char* argv[]){
 		printf("Invalid keyword 'clean' included...\n");
 		return 1;
 	}
-	if(argc == 2 && argv[1][0] == '-'){
+	if(argc == 1)
+		return make_all();
+	else if(argc == 2 && argv[1][0] == '-'){
 		if(strlen(argv[1]) > 4 && strncmp(argv[1] + strlen(argv[1]) - 4, "-prj", 4) == 0){
 			printf("Invalid form...\n");
 			return 1;
