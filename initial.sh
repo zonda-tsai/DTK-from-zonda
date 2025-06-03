@@ -13,13 +13,14 @@ gcc -O3 "$DIR/run.c" -o "$DIR/run" >/dev/null 2>&1
 gcc -O3 "$DIR/clean.c" -o "$DIR/clean" >/dev/null 2>&1
 gcc -O3 "$DIR/char_ins.c" -o "$DIR/char_ins" >/dev/null 2>&1
 gcc -O3 "$DIR/tfmanager.c" -o "$DIR/tfmanager" >/dev/null 2>&1
+gcc -O3 "$DIR/+.c" -o "$DIR/+" >/dev/null 2>&1
 "$DIR/settings" -initial
 mkdir -p "$HOME/bin"
-mv "$DIR/settings" "$DIR/compile" "$DIR/run" "$DIR/clean" "$DIR/char_ins" "$DIR/tfmanager" "$HOME/bin"
+mv "$DIR/settings" "$DIR/compile" "$DIR/run" "$DIR/clean" "$DIR/char_ins" "$DIR/tfmanager" "$DIR/+" "$HOME/bin"
 mkdir -p "$HOME/.zonda.ide"
 mv "$DIR/README.md" "$HOME/.zonda.ide"
 mkdir -p "$HOME/.zonda.ide/sources"
-mv "$DIR/settings.c" "$DIR/compile.c" "$DIR/run.c" "$DIR/clean.c" "$DIR/char_ins.c" "$DIR/tfmanager.c" "$HOME/.zonda.ide/sources"
+mv "$DIR/settings.c" "$DIR/compile.c" "$DIR/run.c" "$DIR/clean.c" "$DIR/char_ins.c" "$DIR/tfmanager.c" "$DIR/+.c" "$HOME/.zonda.ide/sources"
 
 if ! grep -q 'export PATH="$HOME/bin:$PATH"' "$HOME/.bashrc"; then
     echo 'export PATH="$HOME/bin:$PATH"' >> "$HOME/.bashrc"
