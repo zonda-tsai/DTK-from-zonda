@@ -194,7 +194,48 @@ char System(const char* file, int test, int valgrind, int char_ins){
 			free(tst);
 		}
 	}
-	if(!isDir(file) && !access(file, X_OK)){
+	if(!isDir(file) && !access(file, R_OK) && access(file, X_OK)){
+		char shebang[1001] = {0};
+		FILE *f;
+		f = fopen(file, "r");
+		if(f == NULL){
+			printf("Failed to open file \"%s\"\n", file);
+			free(pure_name);
+			return 0;
+		}
+		fgets(shebang, 1000, f);
+		if(strlen(shebang) > 2 && strncmp(shebang, "#!", 2) == 0){
+			printf("\e[33;1m===== %s =====\e[0m\n", file);
+			int len = strlen(shebang) + strlen(file) + test * (8 + strlen(pure_name)) + valgrind * 9 + char_ins * 11;
+			cmd = malloc(len);
+			if(cmd == NULL){
+				free(pure_name);
+				printf("Failed to allocate memory...\n");
+				return 0;
+			}
+			if(strlen(shebang) > 1 && shebang[strlen(shebang) - 1] == '\n')
+				shebang[strlen(shebang) - 1] = 0;
+			strcpy(cmd, "");
+			if(valgrind)
+			strcat(cmd, "valgrind ");
+		strcat(cmd, shebang + 2);
+		strcat(cmd, " ");
+		strcat(cmd, file);
+		if(test){
+			strcat(cmd, " < ");
+			strcat(cmd, pure_name);
+			strcat(cmd, ".test");
+		}
+		if(char_ins)
+			strcat(cmd, " | char_ins");
+		}
+		else{
+			printf("\"%s\" is not an executable file...\n", file);
+			free(pure_name);
+			return 0;
+		}
+	}
+	else if(!isDir(file) && !access(file, X_OK)){
 		printf("\e[33;1m===== %s =====\e[0m\n", file);
 		int len = strlen(file) + 3 + test * (strlen(pure_name) + 8) + valgrind * 9 + char_ins * 11;
 		cmd = malloc(len);
@@ -237,47 +278,6 @@ char System(const char* file, int test, int valgrind, int char_ins){
 		}
 		if(char_ins)
 			strcat(cmd, " | char_ins");
-	}
-	else if(!isDir(file) && !access(file, R_OK)){
-		char shebang[1001] = {0};
-		FILE *f;
-		f = fopen(file, "r");
-		if(f == NULL){
-			printf("Failed to open file \"%s\"\n", file);
-			free(pure_name);
-			return 0;
-		}
-		fgets(shebang, 1000, f);
-		if(strlen(shebang) > 2 && strncmp(shebang, "#!", 2) == 0){
-			printf("\e[33;1m===== %s =====\e[0m\n", file);
-			int len = strlen(shebang) + strlen(file) + test * (8 + strlen(pure_name)) + valgrind * 9 + char_ins * 11;
-			cmd = malloc(len);
-			if(cmd == NULL){
-				free(pure_name);
-				printf("Failed to allocate memory...\n");
-				return 0;
-			}
-			if(strlen(shebang) > 1 && shebang[strlen(shebang) - 1] == '\n')
-				shebang[strlen(shebang) - 1] = 0;
-			strcpy(cmd, "");
-			if(valgrind)
-			strcat(cmd, "valgrind ");
-		strcat(cmd, shebang + 2);
-		strcat(cmd, " ");
-		strcat(cmd, file);
-		if(test){
-			strcat(cmd, " < ");
-			strcat(cmd, pure_name);
-			strcat(cmd, ".test");
-		}
-		if(char_ins)
-			strcat(cmd, " | char_ins");
-		}
-		else{
-			printf("\"%s\" is not an executable file...\n", file);
-			free(pure_name);
-			return 0;
-		}
 	}
 	else{
 		printf("\"%s\" is not an executable file...\n", file);
