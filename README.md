@@ -1,19 +1,19 @@
 # DUE-from-zonda
 
-***DUE-from-zonda** is an easy and light-weight IDE so it's not that powerful.*  
+***DUE-from-zonda** is an easy and light-weight DUE so it's not that powerful.*  
 
 ## Initialization
 
 Download and Initialize by 
 ```sh  
-git clone https://github.com/zonda-tsai/IDE-from-zonda
-bash IDE-from-zonda/initial.sh
+git clone https://github.com/zonda-tsai/DUE-from-zonda
+bash DUE-from-zonda/initial.sh
 ```
   
 ## settings
 
-   - `-reset`     : Reset the IDE  
-   - `-uninstall` : Uninstall this IDE
+   - `-reset`     : Reset the DUE  
+   - `-uninstall` : Uninstall this DUE
    - `--help`     : Show this README.md
 
 ## +
