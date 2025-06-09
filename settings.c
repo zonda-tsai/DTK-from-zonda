@@ -14,19 +14,19 @@ const char* home = NULL;
 void make_dir(){
 	char path[1001] = {0};
 	struct stat st;
-	snprintf(path, sizeof(path), "%s/.zonda.ide", home);
+	snprintf(path, sizeof(path), "%s/.zonda.due", home);
 	if(stat(path, &st))
 		if(mkdir(path, 0755) != 0){
 			printf("Unable to make directory about infos!\n");
 			exit(1);
 		}
-	snprintf(path, sizeof(path), "%s/.zonda.ide/makefiles", home);
+	snprintf(path, sizeof(path), "%s/.zonda.due/makefiles", home);
 	if(stat(path, &st))
 		if(mkdir(path, 0755) != 0){
 			printf("Unable to make directory about makefiles!\n");
 			exit(1);
 		}
-	snprintf(path, sizeof(path), "%s/.zonda.ide/templates", home);
+	snprintf(path, sizeof(path), "%s/.zonda.due/templates", home);
 	if(stat(path, &st))
 		if(mkdir(path, 0755) != 0){
 			printf("Unable to make directory about templates!\n");
@@ -37,7 +37,7 @@ void make_dir(){
 void makefile_C(){
 	char path[1001] = {0};
 	FILE *f;
-	snprintf(path, sizeof(path), "%s/.zonda.ide/makefiles/makefile-c", home);
+	snprintf(path, sizeof(path), "%s/.zonda.due/makefiles/makefile-c", home);
 	f = fopen(path, "w");
 	ERR_PTR(f);
 	fprintf(f, ".SILENT:\n");
@@ -62,7 +62,7 @@ void makefile_C(){
 void makefile_C_prj(){
 	char path[1001] = {0};
 	FILE *f;
-	snprintf(path, sizeof(path), "%s/.zonda.ide/makefiles/makefile-c-prj", home);
+	snprintf(path, sizeof(path), "%s/.zonda.due/makefiles/makefile-c-prj", home);
 	f = fopen(path, "w");
 	ERR_PTR(f);
 	fprintf(f, ".SILENT:\n");
@@ -96,7 +96,7 @@ void makefile_C_prj(){
 void makefile_Cpp(){
 	char path[1001] = {0};
 	FILE *f;
-	snprintf(path, sizeof(path), "%s/.zonda.ide/makefiles/makefile-cpp", home);
+	snprintf(path, sizeof(path), "%s/.zonda.due/makefiles/makefile-cpp", home);
 	f = fopen(path, "w");
 	ERR_PTR(f);
 	fprintf(f, ".SILENT:\n");
@@ -121,7 +121,7 @@ void makefile_Cpp(){
 void makefile_Cpp_prj(){
 	char path[1001] = {0};
 	FILE *f;
-	snprintf(path, sizeof(path), "%s/.zonda.ide/makefiles/makefile-cpp-prj", home);
+	snprintf(path, sizeof(path), "%s/.zonda.due/makefiles/makefile-cpp-prj", home);
 	f = fopen(path, "w");
 	ERR_PTR(f);
 	fprintf(f, ".SILENT:\n");
@@ -155,40 +155,40 @@ void makefile_Cpp_prj(){
 void Template(){
 	char path[1001] = {0};
 	FILE *f;
-	snprintf(path, 1000, "%s/.zonda.ide/templates/c", home);
+	snprintf(path, 1000, "%s/.zonda.due/templates/c", home);
 	f = fopen(path, "w");
 	ERR_PTR(f);
 	fprintf(f, "#include <stdio.h>\n");
 	fprintf(f, "#include <stdlib.h>\n\n");
 	fprintf(f, "int main(int argc, char* argv[]){\n\n\treturn 0;\n}");
 	fclose(f);
-	snprintf(path, 1000, "%s/.zonda.ide/templates/cpp", home);
+	snprintf(path, 1000, "%s/.zonda.due/templates/cpp", home);
 	f = fopen(path, "w");
 	ERR_PTR(f);
 	fprintf(f, "#include <iostream>\n");
 	fprintf(f, "using namespace std;\n\n");
 	fprintf(f, "int main(int argc, char* argv[]){\n\n\treturn 0;\n}");
 	fclose(f);
-	snprintf(path, 1000, "%s/.zonda.ide/templates/h", home);
+	snprintf(path, 1000, "%s/.zonda.due/templates/h", home);
 	f = fopen(path, "w");
 	ERR_PTR(f);
 	fprintf(f, "#ifndef _H\n");
 	fprintf(f, "#define _H\n");
 	fprintf(f, "#endif");
 	fclose(f);
-	snprintf(path, 1000, "%s/.zonda.ide/templates/hpp", home);
+	snprintf(path, 1000, "%s/.zonda.due/templates/hpp", home);
 	f = fopen(path, "w");
 	ERR_PTR(f);
 	fprintf(f, "#ifndef _HPP\n");
 	fprintf(f, "#define _HPP\n");
 	fprintf(f, "#endif");
 	fclose(f);
-	snprintf(path, 1000, "%s/.zonda.ide/templates/sh", home);
+	snprintf(path, 1000, "%s/.zonda.due/templates/sh", home);
 	f = fopen(path, "w");
 	ERR_PTR(f);
 	fprintf(f, "#!/bin/bash\n");
 	fclose(f);
-	snprintf(path, 1000, "%s/.zonda.ide/templates/py", home);
+	snprintf(path, 1000, "%s/.zonda.due/templates/py", home);
 	f = fopen(path, "w");
 	ERR_PTR(f);
 	fprintf(f, "#!/usr/bin/env python3\n");
@@ -225,9 +225,9 @@ int main(int argc, char* argv[]){
 				printf("Failed to allocate memory...\n");
 				return 1;
 			}
-			snprintf(cmd, 10000, "rm -f %s/.zonda.ide/makefiles/*", home);
+			snprintf(cmd, 10000, "rm -f %s/.zonda.due/makefiles/*", home);
 			system(cmd);
-			snprintf(cmd, 10000, "rm -f %s/.zonda.ide/templates/*", home);
+			snprintf(cmd, 10000, "rm -f %s/.zonda.due/templates/*", home);
 			system(cmd);
 			free(cmd);
 			make_dir();
@@ -238,8 +238,8 @@ int main(int argc, char* argv[]){
 			Template();
 		}
 		else if(strcmp(argv[1], "--help") == 0){
-			char temp[strlen(home) + strlen("/.zonda.ide/README.md") + 1];
-			snprintf(temp, sizeof(temp), "%s/.zonda.ide/README.md", home);
+			char temp[strlen(home) + strlen("/.zonda.due/README.md") + 1];
+			snprintf(temp, sizeof(temp), "%s/.zonda.due/README.md", home);
 			if(!access(temp, R_OK)){
 				char *cmd = malloc(10001);
 				if(cmd == NULL){
@@ -289,7 +289,7 @@ int main(int argc, char* argv[]){
 				snprintf(cmd, 10000, "rm -rf %s/.zonda.ide", home);
 				system(cmd);
 				free(cmd);
-				printf("Thanks for using this.\nThis can be downloaded by \"git clone https://github.com/zonda-tsai/IDE-from-zonda\" if you want to.\n");
+				printf("Thanks for using this.\nThis can be downloaded by \"git clone https://github.com/zonda-tsai/DUE-from-zonda\" if you want to.\n");
 				return 0;
 			}
 		}
