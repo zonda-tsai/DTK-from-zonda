@@ -1,6 +1,6 @@
-# IDE-from-zonda
+# DUE-from-zonda
 
-***IDE-from-zonda** is an easy and light-weight IDE so it's not that powerful.*  
+***DUE-from-zonda** is an easy and light-weight IDE so it's not that powerful.*  
 
 ## Initialization
 
