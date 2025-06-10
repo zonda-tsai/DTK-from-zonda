@@ -11,6 +11,7 @@
 		exit(1);\
 	}
 const char* home = NULL;
+
 void make_dir(){
 	char path[1001] = {0};
 	struct stat st;
@@ -210,6 +211,7 @@ int main(int argc, char* argv[]){
 			makefile_Cpp_prj();
 			Template();
 		}
+		
 		else if(strcmp(argv[1], "-reset") == 0){
 			char c;
 			printf("This will initialize the makefiles into only C and C++\n");
@@ -229,33 +231,42 @@ int main(int argc, char* argv[]){
 			system(cmd);
 			snprintf(cmd, 10000, "rm -f %s/.zonda.due/templates/*", home);
 			system(cmd);
-			free(cmd);
 			make_dir();
 			makefile_C();
 			makefile_Cpp();
 			makefile_C_prj();
 			makefile_Cpp_prj();
 			Template();
+			snprintf(cmd, 10000, "gcc -O3 -o %s/bin/+ %s/.zonda.due/sources/+.c >/dev/null 2>&1", home, home);
+			system(cmd);
+			snprintf(cmd, 10000, "gcc -O3 -o %s/bin/settings %s/.zonda.due/sources/settings.c >/dev/null 2>&1", home, home);
+			system(cmd);
+			snprintf(cmd, 10000, "gcc -O3 -o %s/bin/compile %s/.zonda.due/sources/compile.c >/dev/null 2>&1", home, home);
+			system(cmd);
+			snprintf(cmd, 10000, "gcc -O3 -o %s/bin/run %s/.zonda.due/sources/run.c >/dev/null 2>&1", home, home);
+			system(cmd);
+			snprintf(cmd, 10000, "gcc -O3 -o %s/bin/clean %s/.zonda.due/sources/clean.c >/dev/null 2>&1", home, home);
+			system(cmd);
+			snprintf(cmd, 10000, "gcc -O3 -o %s/bin/char_ins %s/.zonda.due/sources/char_ins.c >/dev/null 2>&1", home, home);
+			system(cmd);
+			snprintf(cmd, 10000, "gcc -O3 -o %s/bin/tfmanager %s/.zonda.due/sources/tfmanager.c >/dev/null 2>&1", home, home);
+			system(cmd);
+			snprintf(cmd, 10000, "gcc -o %s/.zonda.due/tutorial %s/.zonda.due/sources/tutorial.c", home, home);
+			system(cmd);
+			free(cmd);
 		}
 		else if(strcmp(argv[1], "--help") == 0){
-			char temp[strlen(home) + strlen("/.zonda.due/README.md") + 1];
-			snprintf(temp, sizeof(temp), "%s/.zonda.due/README.md", home);
-			if(!access(temp, R_OK)){
-				char *cmd = malloc(10001);
-				if(cmd == NULL){
-					printf("Failed to allocate memory...\n");
-					return 1;
-				}
-				snprintf(cmd, 10000, "glow %s", temp);
-				system(cmd);
-				free(cmd);
-			}
+			char temp[strlen(home) + strlen("/.zonda.due/tutorial") + 1];
+			snprintf(temp, sizeof(temp), "%s/.zonda.due/tutorial", home);
+			if(!access(temp, X_OK))
+				system(temp);
 			else{
-				printf("FILE: README.md lost...\n");
+				printf("FILE: tutorial lost...\nTry 'settings -reset'\n");
 				return 1;
 			}
 			return 0;
 		}
+		
 		else if(strcmp(argv[1], "-uninstall") == 0){
 			char ch;
 			printf("Second check for uninstalling? (Y/N) ");
