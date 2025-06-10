@@ -1,9 +1,8 @@
 #!/bin/bash
 
-printf "\x1b[33;1mDownload gcc, g++, make, valgrind and glow\x1b[0m\n"
+printf "\x1b[33;1mDownload gcc, g++, make and valgrind\x1b[0m\n"
 sudo apt update && sudo apt upgrade
 sudo apt install -y gcc g++ make valgrind
-sudo snap install glow
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
