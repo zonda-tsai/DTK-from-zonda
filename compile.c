@@ -89,8 +89,8 @@ int make_all(){
 	snprintf(path, 10001, "%s/.zonda.dtk/makefiles", home);
 	DIR *dir = opendir(path);
 	if(dir == NULL){
-		free(path);
 		printf("Failed to open %s...\n", path);
+		free(path);
 		return 1;
 	}
 	struct dirent *entry;

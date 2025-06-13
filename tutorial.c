@@ -40,7 +40,8 @@ int main(){
 	// Intro
 	printf("First of all, we'll talk about where the files be stored\n");
 	printf("To show the files, we'll go back to home directory (~)\n");
-	printf("The sources are located at \x1b[34m~/.zonda.dtk\x1b[0m and the tools are at ~/bin\n");
+	printf("The sources are located at \x1b[34m~/.zonda.dtk\x1b[0m and the tools are at ");
+	blue("~/bin\n");
 	printf("You can improve them if required after this tutorial\n");
 	printf("\nMove to next page by 'Enter'...\n");
 	getchar();
@@ -224,10 +225,9 @@ int main(){
 	system("clear");
 
 	// final
-
 	printf("For using this development tool kit, you can add some files\n");
 	printf("makefile:\n\t<name>: ");
-	yellow("makefile-[file_type](-prj), prj is for project that can be compiled in a directory\n");
+	yellow("makefile-[file_type](-prj), prj is for project that stored in directory\n");
 	printf("\t<location>: ");
 	blue("~/.zonda.dtk/makefiles\n\n");
 	printf("templates:\n\t<name>:");
