@@ -56,7 +56,7 @@ char makefile(const char* type){
 		return 0;
 	char a, b;
 	char base[strlen(home) + 50];
-	snprintf(base, strlen(home) + 31, "%s/.zonda.due/makefiles/makefile", home);
+	snprintf(base, strlen(home) + 31, "%s/.zonda.dtk/makefiles/makefile", home);
 	int len = strlen(base) + strlen(type);
 	char makefile_normal[len + 1];
 	char makefile_project[len + 5];
@@ -70,7 +70,7 @@ char makefile(const char* type){
 char make(const char* type, const char* name){
 	int n = (name == NULL) ? 0 : strlen(name);
 	char base[10001] = {0};
-	snprintf(base, 10001, "make -f %s/.zonda.due/makefiles/makefile", home);
+	snprintf(base, 10001, "make -f %s/.zonda.dtk/makefiles/makefile", home);
 	char cmd[strlen(base) + strlen(type) + n + 2];
 	if(n == 0)
 		snprintf(cmd, strlen(base) + strlen(type) + 1, "%s%s", base, type);
@@ -86,7 +86,7 @@ int make_all(){
 		printf("Failed to allocate memory...\n");
 		return 1;
 	}
-	snprintf(path, 10001, "%s/.zonda.due/makefiles", home);
+	snprintf(path, 10001, "%s/.zonda.dtk/makefiles", home);
 	DIR *dir = opendir(path);
 	if(dir == NULL){
 		free(path);
@@ -151,8 +151,8 @@ int main(int argc, char* argv[]){
 		snprintf(temp, strlen(argv[1]) + 5, "%s-prj", argv[1]);
 		switch(ins){
 		case 0:
-			printf("~/.zonda.due/makefiles/makefile%s doesn't exist...\n", argv[1]);
-			printf("~/.zonda.due/makefiles/makefile%s-prj doesn't exist...\n", argv[1]);
+			printf("~/.zonda.dtk/makefiles/makefile%s doesn't exist...\n", argv[1]);
+			printf("~/.zonda.dtk/makefiles/makefile%s-prj doesn't exist...\n", argv[1]);
 			return 1;
 		case 1:
 			make(argv[1], NULL);
@@ -196,11 +196,11 @@ int main(int argc, char* argv[]){
 			snprintf(type_prj, strlen(argv[i]) + 6, "-%s-prj", file_type(argv[i]));
 			ins = makefile(type);
 			if(isDir(argv[i]) && ins < 2)
-				printf("~/.zonda.due/makefiles/makefile%s-prj doesn't exist...\n", type);
+				printf("~/.zonda.dtk/makefiles/makefile%s-prj doesn't exist...\n", type);
 			else if(isDir(argv[i]))
 				make(type_prj, name);
 			else if(!(ins & 1))
-				printf("~/.zonda.due/makefiles/makefile%s doesn't exist...\n", type);
+				printf("~/.zonda.dtk/makefiles/makefile%s doesn't exist...\n", type);
 			else
 				make(type, name);
 			free(type);

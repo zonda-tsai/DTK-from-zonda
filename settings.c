@@ -15,19 +15,19 @@ const char* home = NULL;
 void make_dir(){
 	char path[1001] = {0};
 	struct stat st;
-	snprintf(path, sizeof(path), "%s/.zonda.due", home);
+	snprintf(path, sizeof(path), "%s/.zonda.dtk", home);
 	if(stat(path, &st))
 		if(mkdir(path, 0755) != 0){
 			printf("Unable to make directory about infos!\n");
 			exit(1);
 		}
-	snprintf(path, sizeof(path), "%s/.zonda.due/makefiles", home);
+	snprintf(path, sizeof(path), "%s/.zonda.dtk/makefiles", home);
 	if(stat(path, &st))
 		if(mkdir(path, 0755) != 0){
 			printf("Unable to make directory about makefiles!\n");
 			exit(1);
 		}
-	snprintf(path, sizeof(path), "%s/.zonda.due/templates", home);
+	snprintf(path, sizeof(path), "%s/.zonda.dtk/templates", home);
 	if(stat(path, &st))
 		if(mkdir(path, 0755) != 0){
 			printf("Unable to make directory about templates!\n");
@@ -38,7 +38,7 @@ void make_dir(){
 void makefile_C(){
 	char path[1001] = {0};
 	FILE *f;
-	snprintf(path, sizeof(path), "%s/.zonda.due/makefiles/makefile-c", home);
+	snprintf(path, sizeof(path), "%s/.zonda.dtk/makefiles/makefile-c", home);
 	f = fopen(path, "w");
 	ERR_PTR(f);
 	fprintf(f, ".SILENT:\n");
@@ -63,7 +63,7 @@ void makefile_C(){
 void makefile_C_prj(){
 	char path[1001] = {0};
 	FILE *f;
-	snprintf(path, sizeof(path), "%s/.zonda.due/makefiles/makefile-c-prj", home);
+	snprintf(path, sizeof(path), "%s/.zonda.dtk/makefiles/makefile-c-prj", home);
 	f = fopen(path, "w");
 	ERR_PTR(f);
 	fprintf(f, ".SILENT:\n");
@@ -97,7 +97,7 @@ void makefile_C_prj(){
 void makefile_Cpp(){
 	char path[1001] = {0};
 	FILE *f;
-	snprintf(path, sizeof(path), "%s/.zonda.due/makefiles/makefile-cpp", home);
+	snprintf(path, sizeof(path), "%s/.zonda.dtk/makefiles/makefile-cpp", home);
 	f = fopen(path, "w");
 	ERR_PTR(f);
 	fprintf(f, ".SILENT:\n");
@@ -122,7 +122,7 @@ void makefile_Cpp(){
 void makefile_Cpp_prj(){
 	char path[1001] = {0};
 	FILE *f;
-	snprintf(path, sizeof(path), "%s/.zonda.due/makefiles/makefile-cpp-prj", home);
+	snprintf(path, sizeof(path), "%s/.zonda.dtk/makefiles/makefile-cpp-prj", home);
 	f = fopen(path, "w");
 	ERR_PTR(f);
 	fprintf(f, ".SILENT:\n");
@@ -156,40 +156,40 @@ void makefile_Cpp_prj(){
 void Template(){
 	char path[1001] = {0};
 	FILE *f;
-	snprintf(path, 1000, "%s/.zonda.due/templates/c", home);
+	snprintf(path, 1000, "%s/.zonda.dtk/templates/c", home);
 	f = fopen(path, "w");
 	ERR_PTR(f);
 	fprintf(f, "#include <stdio.h>\n");
 	fprintf(f, "#include <stdlib.h>\n\n");
 	fprintf(f, "int main(int argc, char* argv[]){\n\n\treturn 0;\n}");
 	fclose(f);
-	snprintf(path, 1000, "%s/.zonda.due/templates/cpp", home);
+	snprintf(path, 1000, "%s/.zonda.dtk/templates/cpp", home);
 	f = fopen(path, "w");
 	ERR_PTR(f);
 	fprintf(f, "#include <iostream>\n");
 	fprintf(f, "using namespace std;\n\n");
 	fprintf(f, "int main(int argc, char* argv[]){\n\n\treturn 0;\n}");
 	fclose(f);
-	snprintf(path, 1000, "%s/.zonda.due/templates/h", home);
+	snprintf(path, 1000, "%s/.zonda.dtk/templates/h", home);
 	f = fopen(path, "w");
 	ERR_PTR(f);
 	fprintf(f, "#ifndef _H\n");
 	fprintf(f, "#define _H\n");
 	fprintf(f, "#endif");
 	fclose(f);
-	snprintf(path, 1000, "%s/.zonda.due/templates/hpp", home);
+	snprintf(path, 1000, "%s/.zonda.dtk/templates/hpp", home);
 	f = fopen(path, "w");
 	ERR_PTR(f);
 	fprintf(f, "#ifndef _HPP\n");
 	fprintf(f, "#define _HPP\n");
 	fprintf(f, "#endif");
 	fclose(f);
-	snprintf(path, 1000, "%s/.zonda.due/templates/sh", home);
+	snprintf(path, 1000, "%s/.zonda.dtk/templates/sh", home);
 	f = fopen(path, "w");
 	ERR_PTR(f);
 	fprintf(f, "#!/bin/bash\n");
 	fclose(f);
-	snprintf(path, 1000, "%s/.zonda.due/templates/py", home);
+	snprintf(path, 1000, "%s/.zonda.dtk/templates/py", home);
 	f = fopen(path, "w");
 	ERR_PTR(f);
 	fprintf(f, "#!/usr/bin/env python3\n");
@@ -227,9 +227,9 @@ int main(int argc, char* argv[]){
 				printf("Failed to allocate memory...\n");
 				return 1;
 			}
-			snprintf(cmd, 10000, "rm -f %s/.zonda.due/makefiles/*", home);
+			snprintf(cmd, 10000, "rm -f %s/.zonda.dtk/makefiles/*", home);
 			system(cmd);
-			snprintf(cmd, 10000, "rm -f %s/.zonda.due/templates/*", home);
+			snprintf(cmd, 10000, "rm -f %s/.zonda.dtk/templates/*", home);
 			system(cmd);
 			make_dir();
 			makefile_C();
@@ -237,27 +237,27 @@ int main(int argc, char* argv[]){
 			makefile_C_prj();
 			makefile_Cpp_prj();
 			Template();
-			snprintf(cmd, 10000, "gcc -O3 -o %s/bin/+ %s/.zonda.due/sources/+.c >/dev/null 2>&1", home, home);
+			snprintf(cmd, 10000, "gcc -O3 -o %s/bin/+ %s/.zonda.dtk/sources/+.c >/dev/null 2>&1", home, home);
 			system(cmd);
-			snprintf(cmd, 10000, "gcc -O3 -o %s/bin/settings %s/.zonda.due/sources/settings.c >/dev/null 2>&1", home, home);
+			snprintf(cmd, 10000, "gcc -O3 -o %s/bin/settings %s/.zonda.dtk/sources/settings.c >/dev/null 2>&1", home, home);
 			system(cmd);
-			snprintf(cmd, 10000, "gcc -O3 -o %s/bin/compile %s/.zonda.due/sources/compile.c >/dev/null 2>&1", home, home);
+			snprintf(cmd, 10000, "gcc -O3 -o %s/bin/compile %s/.zonda.dtk/sources/compile.c >/dev/null 2>&1", home, home);
 			system(cmd);
-			snprintf(cmd, 10000, "gcc -O3 -o %s/bin/run %s/.zonda.due/sources/run.c >/dev/null 2>&1", home, home);
+			snprintf(cmd, 10000, "gcc -O3 -o %s/bin/run %s/.zonda.dtk/sources/run.c >/dev/null 2>&1", home, home);
 			system(cmd);
-			snprintf(cmd, 10000, "gcc -O3 -o %s/bin/clean %s/.zonda.due/sources/clean.c >/dev/null 2>&1", home, home);
+			snprintf(cmd, 10000, "gcc -O3 -o %s/bin/clean %s/.zonda.dtk/sources/clean.c >/dev/null 2>&1", home, home);
 			system(cmd);
-			snprintf(cmd, 10000, "gcc -O3 -o %s/bin/char_ins %s/.zonda.due/sources/char_ins.c >/dev/null 2>&1", home, home);
+			snprintf(cmd, 10000, "gcc -O3 -o %s/bin/char_ins %s/.zonda.dtk/sources/char_ins.c >/dev/null 2>&1", home, home);
 			system(cmd);
-			snprintf(cmd, 10000, "gcc -O3 -o %s/bin/tfmanager %s/.zonda.due/sources/tfmanager.c >/dev/null 2>&1", home, home);
+			snprintf(cmd, 10000, "gcc -O3 -o %s/bin/tfmanager %s/.zonda.dtk/sources/tfmanager.c >/dev/null 2>&1", home, home);
 			system(cmd);
-			snprintf(cmd, 10000, "gcc -o %s/.zonda.due/tutorial %s/.zonda.due/sources/tutorial.c", home, home);
+			snprintf(cmd, 10000, "gcc -o %s/.zonda.dtk/tutorial %s/.zonda.dtk/sources/tutorial.c", home, home);
 			system(cmd);
 			free(cmd);
 		}
 		else if(strcmp(argv[1], "--help") == 0){
-			char temp[strlen(home) + strlen("/.zonda.due/tutorial") + 1];
-			snprintf(temp, sizeof(temp), "%s/.zonda.due/tutorial", home);
+			char temp[strlen(home) + strlen("/.zonda.dtk/tutorial") + 1];
+			snprintf(temp, sizeof(temp), "%s/.zonda.dtk/tutorial", home);
 			if(!access(temp, X_OK))
 				system(temp);
 			else{
@@ -297,10 +297,10 @@ int main(int argc, char* argv[]){
 				system(cmd);
 				snprintf(cmd, 10000, "rm -f %s/bin/tfmanager", home);
 				system(cmd);
-				snprintf(cmd, 10000, "rm -rf %s/.zonda.ide", home);
+				snprintf(cmd, 10000, "rm -rf %s/.zonda.dtk", home);
 				system(cmd);
 				free(cmd);
-				printf("Thanks for using this.\nThis can be downloaded by \"git clone https://github.com/zonda-tsai/DUE-from-zonda\" if you want to.\n");
+				printf("Thanks for using this.\nThis can be downloaded by \"git clone https://github.com/zonda-tsai/DTK-from-zonda\" if you want to.\n");
 				return 0;
 			}
 		}

@@ -52,7 +52,7 @@ int main(int argc, char* argv[]){
 	char *path = NULL, *file = NULL;
 	if(!allocate(&path)) return 1;
 	if(!allocate(&file)){free(path); return 1;}
-	snprintf(path, 10001, "%s/.zonda.due/templates", home);
+	snprintf(path, 10001, "%s/.zonda.dtk/templates", home);
 	struct stat st;
 	if(stat(path, &st) || (!stat(path, &st) && !S_ISDIR(st.st_mode))){
 		printf("Failed to open %s\n", path);

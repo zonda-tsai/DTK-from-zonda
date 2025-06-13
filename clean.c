@@ -53,7 +53,7 @@ int clean(char *type){
 		printf("Failed to allocate memory...\n");
 		return 1;
 	}
-	snprintf(path, ARR_LEN - 1, "%s/.zonda.due/makefiles/makefile%s", home, type);
+	snprintf(path, ARR_LEN - 1, "%s/.zonda.dtk/makefiles/makefile%s", home, type);
 	snprintf(path2, ARR_LEN - 1, "%s-prj", path);
 	if(access(path, R_OK)){
 		printf("Failed to get %s\n", path);
@@ -87,12 +87,12 @@ int clean_all(){
 		printf("Failed to allocate memory...\n");
 		return 1;
 	}
-	snprintf(path, ARR_LEN - 1, "%s/.zonda.due/makefiles", home);
+	snprintf(path, ARR_LEN - 1, "%s/.zonda.dtk/makefiles", home);
 	DIR *dir = opendir(path);
 	if(dir == NULL){
 		free(path);
 		free(makefile);
-		printf("Failed to open ~/.zonda.due/makefiles...\n");
+		printf("Failed to open ~/.zonda.dtk/makefiles...\n");
 		return 1;
 	}
 	struct dirent *entry;

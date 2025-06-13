@@ -40,7 +40,7 @@ int main(){
 	// Intro
 	printf("First of all, we'll talk about where the files be stored\n");
 	printf("To show the files, we'll go back to home directory (~)\n");
-	printf("The sources are located at \x1b[34m~/.zonda.due\x1b[0m and the tools are at ~/bin\n");
+	printf("The sources are located at \x1b[34m~/.zonda.dtk\x1b[0m and the tools are at ~/bin\n");
 	printf("You can improve them if required after this tutorial\n");
 	printf("\nMove to next page by 'Enter'...\n");
 	getchar();
@@ -52,7 +52,7 @@ int main(){
 	printf("e.g. ");
 	yellow("+ HelloWorld.c");
 	printf(" will copy a template of file type 'c' from ");
-	blue("~/.zonda.due/templates/c\n");
+	blue("~/.zonda.dtk/templates/c\n");
 	printf("Let's try with ");
 	yellow("+ HelloWorld.c");
 	printf(":\n");
@@ -98,7 +98,7 @@ int main(){
 	yellow("'shebang'(start with #!)");
 	printf(", you can + the template of file type .sh and .py after this tutorial and see its shebang\n");
 	printf("For all the others, you'll need the compiler, like gcc, g++ for c/c++\n");
-	printf("Make sure you have the makefile of the specific types, you can put it into \x1b[34m~/.zonda.due/makefiles\x1b[0m\n");
+	printf("Make sure you have the makefile of the specific types, you can put it into \x1b[34m~/.zonda.dtk/makefiles\x1b[0m\n");
 	printf("Initial one included c, c++ and their project.\n");
 	printf("p.s. For c/c++ project, just named a directory like <name>.c and inside it are the programs of that project\n");
 	printf("\nMove to next page by 'Enter'...\n");
@@ -215,10 +215,25 @@ int main(){
 
 	// settings
 	printf("Finally, let's talk about the settings.\n");
-	printf("You can reset the DUE if you delete some initial executable files, templates or makefiles by \x1b[33msettings -reset\x1b[0m\n");
-	printf("However, if you delete the .c files inside \x1b[34m~/.zonda.due\x1b[0m, you can only to git clone them again...\n");
-	printf("You can also uninstall this if you think this DUE sucks. Uninstall it by \x1b[33msettings -uninstall\x1b[0m\n");
+	printf("You can reset the DTK if you delete some initial executable files, templates or makefiles by \x1b[33msettings -reset\x1b[0m\n");
+	printf("However, if you delete the .c files inside \x1b[34m~/.zonda.dtk\x1b[0m, you can only to git clone them again...\n");
+	printf("You can also uninstall this if you think this DTK sucks. Uninstall it by \x1b[33msettings -uninstall\x1b[0m\n");
 	printf("For showing this tutorial again, please use \x1b[33msettings --help\x1b[0m\n");
+	printf("\nMove to next page by 'Enter'...\n");
+	getchar();
+	system("clear");
+
+	// final
+
+	printf("For using this development tool kit, you can add some files\n");
+	printf("makefile:\n\t<name>: ");
+	yellow("makefile-[file_type](-prj), prj is for project that can be compiled in a directory\n");
+	printf("\t<location>: ");
+	blue("~/.zonda.dtk/makefiles\n\n");
+	printf("templates:\n\t<name>:");
+	yellow(" [file_type]\n");
+	printf("\t<location>: ");
+	blue("~/.zonda.dtk/templates\n\n");
 	printf("\nThis is the end of the tutorial, leave by 'Enter'\n");
 	getchar();
 	system("clear");
