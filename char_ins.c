@@ -14,11 +14,29 @@ typedef struct{
 }chars;
 
 void help(){
-	printf("For stdout, please use pipeline, \'|\'\n");
-	printf("For document, please use char_ins < \'file_name\'\n");
-	printf("New-line, tab, return and end of string will be represent by \e[34m\\n\e[0m, \e[34m\\t\e[0m and \e[34m\\r\e[0m \e[34m\\0\e[0m\n");
-	printf("Spaces will be represent by \'\e[100m \e[0m\'\n");
-	printf("Control ASCII will be shown as \e[45m\\x<HEX>\e[0m\n");
+    printf("char_ins is a tool to inspect characters from a file or standard input.\n\n");
+    printf("USAGE:\n");
+    printf("  char_ins [FILE] [OPTIONS]\n");
+    printf("  cat <file> | char_ins [OPTIONS]\n\n");
+    printf("OPTIONS:\n");
+    printf("  [FILE]           Specify an input file to analyze.\n");
+    printf("                   If no file is given, reads from standard input (stdin).\n\n");
+    printf("  --help           Show this help message and exit.\n");
+    printf("  --ascii_table    Show the full ASCII table and exit.\n");
+    printf("  --result         Only show the final statistics summary, without character details.\n\n");
+    printf("EXAMPLES:\n");
+    printf("  # Analyze a file and show character details\n");
+    printf("  char_ins my_document.txt\n\n");
+    printf("  # Analyze content from a pipe and show details\n");
+    printf("  echo -e \"hello\\tworld\" | char_ins\n\n");
+    printf("  # Get only the statistics for a file\n");
+    printf("  char_ins my_document.txt --result\n\n");
+    printf("  # Get only the statistics from a pipe\n");
+    printf("  cat my_document.txt | char_ins --result\n\n");
+	printf("OUTPUTS:\n[Control Characters]\n");
+	printf("\tSome will be shown in blue e.g. New-line: \e[34m\\n\e[0m\n");
+	printf("\tOthers will be shown by \e[45m\\x<HEX>\e[0m\n[Spaces]\n");
+	printf("\tSpaces will be shown by \'\e[100m \e[0m\'\n\n");
 	printf("For all the others, excluding digits, alphabets and punctuations, will be represent by \e[41m(\\x<HEX>)\e[0m\n\n");
 	printf("To show ascii-table by char_ins --ascii_table\n");
 }
