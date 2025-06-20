@@ -2,6 +2,17 @@
 #include <string.h>
 #include <ctype.h>
 
+typedef struct{
+	unsigned long long n;
+	unsigned long long news;
+	unsigned long long tabs;
+	unsigned long long ctrls;
+	unsigned long long spaces;
+	unsigned long long unknows;
+	unsigned long long normals;
+	unsigned long long returns;
+}chars;
+
 void help(){
 	printf("For stdout, please use pipeline, \'|\'\n");
 	printf("For document, please use char_ins < \'file_name\'\n");
@@ -31,8 +42,101 @@ void ascii(){
 	}
 }
 
+chars output_detail(FILE* f){
+	chars a = {0};
+	char temp;
+	while((temp = fgetc(f)) != EOF){
+		if(iscntrl(temp)){
+			a.ctrls++;
+			switch(temp){
+			case '\0':
+				printf("\e[34m\\0\e[0m");
+				break;
+			case '\n':
+				a.news++;
+				printf("\e[34m\\n\e[0m\n");
+				break;
+			case '\t':
+				a.tabs++;
+				printf("\e[34m\\t\e[0m\t");
+				break;
+			case '\r':
+				a.returns++;
+				printf("\e[34m\\r\e[0m");
+				break;
+			case '\a':
+				printf("\e[34m\\a\e[0m\a");
+				break;
+			case '\b':
+				printf("\e[34m\\b\e[0m");
+				break;
+			case '\v':
+				printf("\e[34m\\v\e[0m");
+				break;
+			default:
+				printf("\e[45m\\x%x\e[0m", temp);
+			}
+		}
+		else if(isspace(temp)){
+			a.spaces++;
+			printf("\e[100m%c\e[0m", temp);
+		}
+		else if(!isalpha(temp) && !isdigit(temp) && !ispunct(temp)){
+			a.unknows++;
+			printf("\e[41m\\x%x\e[0m", (unsigned char)temp);
+		}
+		else{
+			a.normals++;
+			putchar(temp);
+		}
+		a.n++;
+	}
+	return a;
+}
+
+chars calculate(FILE *f){
+	chars a = {0};
+	char temp;
+	while((temp = fgetc(f)) != EOF){
+		if(iscntrl(temp)){
+			a.ctrls++;
+			switch(temp){
+			case '\n':
+				a.news++;
+				break;
+			case '\t':
+				a.tabs++;
+				break;
+			case '\r':
+				a.returns++;
+				break;
+			}
+		}
+		else if(isspace(temp))
+			a.spaces++;
+		else if(!isalpha(temp) && !isdigit(temp) && !ispunct(temp))
+			a.unknows++;
+		else
+			a.normals++;
+		a.n++;
+	}
+	return a;
+}
+
+void output_result(const chars a){
+	printf("\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n");	
+	printf("| Tabs                             : %-10llu\n", a.tabs);
+	printf("| Spaces                           : %-10llu\n", a.spaces);
+	printf("| Returns                          : %-10llu\n", a.returns);
+	printf("| Ctrl ASCIIs                      : %-10llu\n", a.ctrls);
+	printf("| Alphabets, Numbers, Punctuations : %-10llu\n", a.normals);
+	printf("| Unknows                          : %-10llu\n", a.unknows);
+	printf("\e[33;1m| Total words                      : %-10llu\e[0m\n", a.n);
+	printf("\e[33;1m| Lines                            : %-10llu\e[0m\n\n", a.news + 1);
+}
+
 int main(int argc, char* argv[]){
-	
+	FILE *f = NULL;
 	if(argc == 2 && strcmp(argv[1], "--help") == 0){
 		help();
 		return 0;
@@ -41,65 +145,33 @@ int main(int argc, char* argv[]){
 		ascii();
 		return 0;
 	}
-	else if(argc != 1){
+	else if(argc == 2 && !strcmp(argv[1], "--result")){
+		output_result(calculate(stdin));
+	}
+	else if(argc == 3 && !strcmp(argv[1], "--result")){
+		f = fopen(argv[2], "r");
+		if(f == NULL){
+			printf("Failed to open FILE '%s'\n", argv[2]);
+			return 1;
+		}
+		output_result(calculate(f));
+		fclose(f);
+	}
+	else if(argc == 2){
+		f = fopen(argv[1], "r");
+		if(f == NULL){
+			printf("Failed to open FILE '%s'\n", argv[1]);
+			return 1;
+		}
+		output_result(output_detail(f));
+		fclose(f);
+	}
+	else if(argc == 1)
+		output_result(output_detail(stdin));
+	else{
 		printf("Invalid input!\n");
 		return 1;
 	}
-	unsigned long long i;
-	unsigned long long n = 0, news = 0, tabs = 0, ctrls = 0, spaces = 0, unknows = 0, normals = 0, returns = 0;
-	char temp[1000001] = {0};
-	while(fgets(temp, 1000000, stdin) != NULL){
-		for(i = 0 ; temp[i] != 0 && i < 1000000 ; i++){
-			if(iscntrl(temp[i])){
-				ctrls++;
-				if(temp[i] == '\n'){
-					news++;
-					printf("\e[34m\\n\e[0m");
-				}
-				else if(temp[i] == '\t'){
-					tabs++;
-					printf("\e[34m\\t\e[0m");
-				}
-				else if(temp[i] == '\r'){
-					returns++;
-					printf("\e[34m\\r\e[0m");
-				}
-				else if(temp[i] == '\a')
-					printf("\e[34m\\a\e[0m");
-				else if(temp[i] == '\b')
-					printf("\e[34m\\b\e[0m");
-				else if(temp[i] == '\v')
-					printf("\e[34m\\v\e[0m");
-				else
-					printf("\e[45m\\x%x\e[0m", temp[i]);
-			}
-
-			else if(isspace(temp[i])){
-				spaces++;
-				printf("\e[100m%c\e[0m", temp[i]);
-			}
-
-			else if(!isalpha(temp[i]) && !isdigit(temp[i]) && !ispunct(temp[i])){
-				unknows++;
-				printf("\e[41m\\x%x\e[0m", (unsigned char)temp[i]);
-			}
-			else{
-				normals++;
-				putchar(temp[i]);
-			}
-		}
-		n += i;
-		if(temp[i] == 0)
-			printf("\e[34m\\0\e[0m\n");
-	}
-	printf("\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n");
-	printf("| Tabs                             : %-10llu\n", tabs);
-	printf("| Spaces                           : %-10llu\n", spaces);
-	printf("| Returns                          : %-10llu\n", returns);
-	printf("| Ctrls ASCIIs                     : %-10llu\n", ctrls);
-	printf("| Alphabets, Numbers, Punctuations : %-10llu\n", normals);
-	printf("| Unknows                          : %-10llu\n", unknows);
-	printf("\e[33;1m| Total words                      : %-10llu\e[0m\n", n);
-	printf("\e[33;1m| Lines                            : %-10llu\e[0m\n\n", news + 1);
+	
 	return 0;
 }
