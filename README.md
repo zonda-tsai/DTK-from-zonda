@@ -20,26 +20,27 @@ bash DUE-from-zonda/initial.sh
    - `file_name.file_type` : Using the template of that file_type.  
 
 ## compile
-
+   - `(No arg)`: Compile by all the makefile
    - `[arg 1]` : Types. Initial one only provide c and cpp (e.g. -c, -cpp)  
    - `[arg n]` : for n >= 1, you can assign specific files.
 
 ## run
    - `-type`, `-char_ins`, `-valgrind` and `-test` can be suffixed at the same time.  
-&emsp;// ***Type should always be the first argument after run***  
-   - ``run``                 : run all. **It'll include all files in that directory**  
-   - ``run -char_ins``       : run with ascii inspector.  
-   - ``run -valgrind``       : run with valgrind, memory inspector.  
-   - ``run -test``           : run all with testfile. e.g. `./a < a.test`  
-   - ``run -type``           : run all the files with that type. e.g. run -c (-test)  
-   - ``run executable_file`` : run all assigned executable_file and files prefixed shebang
+       - ***Type should always be the first argument after run***  
+   - ``(no args)``       : run all. **It'll include all files in that directory**  
+   - ``-char_ins``       : run with ascii inspector.  
+   - ``-valgrind``       : run with valgrind, memory inspector.  
+   - ``-test``           : run all with testfile. e.g. `./a < a.test`  
+   - ``-type``           : run all the files with that type. e.g. run -c (-test)  
+   - ``executable_file`` : run all assigned executable_file and files prefixed shebang
 
 ## clean
    - This can clean by all makefiles. If you want to clean specific type, add `-type` after it
 
 ## char_ins
    - ``--help``        : show the usage of char_ins
-   - ``--ascii_table`` : show the ascii table (in HEX)  
+   - ``--ascii_table`` : show the ascii table (in HEX)
+   - ``--result``      : only show how many characters for each class  
 
 ## tfmanager
    - ``-merge``  : merge all .test file into all.test  
