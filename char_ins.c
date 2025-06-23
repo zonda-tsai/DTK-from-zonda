@@ -149,7 +149,7 @@ void output_result(const chars a){
 	printf("| Ctrl ASCIIs                      : %-10llu\n", a.ctrls);
 	printf("| Alphabets, Numbers, Punctuations : %-10llu\n", a.normals);
 	printf("| Unknows                          : %-10llu\n", a.unknows);
-	printf("\e[33;1m| Total words                      : %-10llu\e[0m\n", a.n);
+	printf("\e[33;1m| Total Characters                 : %-10llu\e[0m\n", a.n);
 	printf("\e[33;1m| Lines                            : %-10llu\e[0m\n\n", a.news + 1);
 }
 
