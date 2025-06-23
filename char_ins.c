@@ -34,10 +34,10 @@ void help(){
     printf("  # Get only the statistics from a pipe\n");
     printf("  cat my_document.txt | char_ins --result\n\n");
 	printf("OUTPUTS:\n[Control Characters]\n");
-	printf("\tSome will be shown in blue e.g. New-line: \e[34m\\n\e[0m\n");
-	printf("\tOthers will be shown by \e[45m\\x<HEX>\e[0m\n[Spaces]\n");
+	printf("\tSpecials like new-line or tab will be shown by \e[34m\\n\e[0m, \e[34m\\t\e[0m\n");
+	printf("\tOthers will be shown by \e[34m\\x<HEX>\e[0m\n[Spaces]\n");
 	printf("\tSpaces will be shown by \'\e[100m \e[0m\'\n\n");
-	printf("For all the others, excluding digits, alphabets and punctuations, will be represent by \e[41m(\\x<HEX>)\e[0m\n\n");
+	printf("For all the others, excluding digits, alphabets and punctuations, will be represent by \e[31m\\x<HEX>\e[0m\n\n");
 	printf("To show ascii-table by char_ins --ascii_table\n");
 }
 
@@ -92,7 +92,7 @@ chars output_detail(FILE* f){
 				printf("\e[34m\\v\e[0m");
 				break;
 			default:
-				printf("\e[45m\\x%x\e[0m", temp);
+				printf("\e[34m\\x%x\e[0m", temp);
 			}
 		}
 		else if(isspace(temp)){
@@ -101,7 +101,7 @@ chars output_detail(FILE* f){
 		}
 		else if(!isalpha(temp) && !isdigit(temp) && !ispunct(temp)){
 			a.unknows++;
-			printf("\e[41m\\x%x\e[0m", (unsigned char)temp);
+			printf("\e[31m\\x%x\e[0m", (unsigned char)temp);
 		}
 		else{
 			a.normals++;
